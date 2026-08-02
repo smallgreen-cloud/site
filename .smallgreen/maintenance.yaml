@@ -1,0 +1,21 @@
+schema_version: "0.1.0"
+update:
+  strategy: upstream-pr
+  upstream_check: registry cards/ 有變更即重 build 部署（CI 自動；資料真相源在 registry，本站無自有資料要同步）
+  preview_before_promote: true
+backup:
+  targets: [none]
+  method: 純靜態站零狀態——dist 隨時可由 registry 重生
+restore:
+  method: 重跑 build＋deploy 即回復
+  d1_time_travel_note: 不適用
+uninstall:
+  steps:
+    - npx wrangler pages project delete smallgreen-site
+    - 刪除 repo 副本
+  data_export_first: false
+quota_watchdog:
+  watch:
+    - resource: pages_requests
+      free_limit: unlimited static requests（Pages 靜態資產不計 Functions 額度）
+      check_method: dashboard → Workers & Pages → smallgreen-site → metrics

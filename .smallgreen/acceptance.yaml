@@ -1,0 +1,20 @@
+schema_version: "0.1.0"
+health:
+  path: /
+  expect_status: 200
+smoke:
+  - name: 首頁載入
+    steps:
+      - action: http_request
+        params: { method: GET, path: / }
+    expect: { status: 200 }
+    idempotency: true
+user_acceptance:
+  - task: 首頁渲染全部服務卡（與 registry cards/ 數量一致；雙分類專案重複顯示屬設計）
+    success_looks_like: HTML 內 article.card 數 ≥ registry 卡數；四個分類節標題可見
+  - task: 檢查零外部資源載入（信任揭露自我一致）
+    success_looks_like: HTML 無外部 script/style/font/img 引用（連結 href 除外）——view-source 或 grep 驗證
+  - task: 任一卡的 upstream 與 adapter 連結可達
+    success_looks_like: 目標 GitHub repo HTTP 200
+uninstall_check:
+  resource_zero_diff: true

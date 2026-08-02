@@ -1,0 +1,19 @@
+# SmallGreen 目錄站——Path A（原生採用）首例：站本身依標準部署
+schema_version: "0.2.0"
+profile: small-app
+summary:
+  purpose: SmallGreen Cloud 服務目錄站——render registry 服務卡（驗證等級、免費層、低碳、資料流向揭露）
+  audience: 想在 Cloudflare 免費層自架小型服務的個人與小型團隊
+  users_estimate: 1-10
+login_method: none
+data:
+  types: [none]
+  stored_in: [none]
+  notes: 純靜態站——build 期自 registry repo 讀服務卡渲染，runtime 零資料儲存、零 cookie、零遙測。registry YAML＝真相源，本站只 render
+secrets: []
+external_services:
+  - domain: github.com
+    kind: fixed
+    purpose: 卡片上的 upstream／adapter repo 連結（瀏覽者點擊才外連）
+    data_sent: 無（純超連結，不載入第三方資源）
+alt_deployment: []

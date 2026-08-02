@@ -1,0 +1,56 @@
+name: site
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  repository_dispatch:
+    types: [registry-updated]
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: smallgreen-cloud/conformance
+          path: .conformance
+      - uses: actions/checkout@v4
+        with:
+          repository: smallgreen-cloud/spec
+          ref: v0.2.1
+          path: .spec
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet jsonschema pyyaml
+      - run: python .conformance/scripts/check_contract.py --spec .spec --repo .
+      - run: python .conformance/scripts/check_profile.py --spec .spec --repo .
+      - run: python .conformance/scripts/check_secrets_manifest.py --repo .
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: smallgreen-cloud/registry
+          path: .registry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet pyyaml
+      - name: Build（registry 卡片 → dist）
+        run: python tools/build.py --registry .registry
+      - name: 產物斷言（卡數與 registry 一致）
+        run: |
+          python - <<'EOF'
+          from pathlib import Path
+          n_cards = len(list(Path(".registry/cards").glob("*.yaml")))
+          html = Path("dist/index.html").read_text()
+          rendered = html.count('<article class="card">')
+          assert rendered >= n_cards, f"rendered {rendered} < cards {n_cards}"
+          assert "smallgreen" in html.lower()
+          print(f"ok: {rendered} rendered / {n_cards} cards")
+          EOF
