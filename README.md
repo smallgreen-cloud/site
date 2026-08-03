@@ -4,7 +4,8 @@
 
 [![site](https://github.com/smallgreen-cloud/site/actions/workflows/site.yml/badge.svg)](https://github.com/smallgreen-cloud/site/actions/workflows/site.yml)
 
-- 線上：https://smallgreen-site-9pi.pages.dev
+- 正式站：https://smallgreen.cooperation.tw
+- Cloudflare 備援：https://smallgreen-site-9pi.pages.dev
 - 資料來源：[registry](https://github.com/smallgreen-cloud/registry)（cards/＋taxonomy.yaml）
 - 標準：[spec](https://github.com/smallgreen-cloud/spec) v0.2.1
 - 網站規範：[DESIGN_AND_CONTENT_POLICY.md](DESIGN_AND_CONTENT_POLICY.md)（設計系統、雙語、SEO／AEO、公開內容邊界）
