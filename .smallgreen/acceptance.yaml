@@ -10,11 +10,15 @@ smoke:
     expect: { status: 200 }
     idempotency: true
 user_acceptance:
-  - task: 首頁渲染全部服務卡（與 registry cards/ 數量一致；雙分類專案重複顯示屬設計）
-    success_looks_like: HTML 內 article.card 數 ≥ registry 卡數；四個分類節標題可見
-  - task: 檢查零外部資源載入（信任揭露自我一致）
-    success_looks_like: HTML 無外部 script/style/font/img 引用（連結 href 除外）——view-source 或 grep 驗證
-  - task: 任一卡的 upstream 與 adapter 連結可達
-    success_looks_like: 目標 GitHub repo HTTP 200
+  - task: 雙語首頁、核心資訊頁與服務目錄皆可直接存取
+    success_looks_like: 英文根目錄與 /zh-tw/ 均為 200；manifesto、concepts、services、standard、evidence、faq 兩種語言各自存在
+  - task: Registry 每張服務卡各產生英文與繁中詳頁
+    success_looks_like: /services/{id}/ 與 /zh-tw/services/{id}/ 數量皆等於 registry cards/；舊 /s/{id}.html 指向英文 canonical URL
+  - task: 檢查零第三方 runtime 資源載入（信任揭露自我一致）
+    success_looks_like: script、style、font、image 僅使用本站路徑；GitHub 等外部網址只作使用者主動點擊的連結
+  - task: 檢查雙語搜尋契約
+    success_looks_like: 每個語言版本 self-canonical，互列 en、zh-Hant-TW、x-default hreflang；sitemap 也包含語言對
+  - task: 任一卡的 upstream、adapter 與 Evidence Pack 連結可達
+    success_looks_like: 目標 GitHub 公開路徑 HTTP 200，且頁面沒有暴露 private URL、account ID 或 secret
 uninstall_check:
   resource_zero_diff: true
