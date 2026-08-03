@@ -110,6 +110,11 @@ class SiteArchitectureTest(unittest.TestCase):
         self.assertNotRegex(home, r'<(?:script|img)[^>]+(?:src)="https?://')
         self.assertNotRegex(home, r'<link[^>]+href="https?://[^\"]+\.(?:css|woff2?)')
 
+    def test_home_pages_include_bing_site_verification(self):
+        verification = '<meta name="msvalidate.01" content="3F053D60DF41C4723BAD4DEB0195890B">'
+        self.assertIn(verification, self.read("index.html"))
+        self.assertIn(verification, self.read("zh-tw/index.html"))
+
     def test_forced_title_lines_are_scoped_to_chinese(self):
         css = self.read("assets/site.css")
         self.assertNotRegex(css, r"(?m)^\.hero-title-line\s*\{[^}]*white-space:\s*nowrap")

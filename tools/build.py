@@ -127,9 +127,14 @@ def layout(*, lang: str, active: str, path: str, title: str, description: str,
     if jsonld:
         jsonld_text = json.dumps(jsonld, ensure_ascii=False).replace("</", "<\\/")
         structured = f'<script type="application/ld+json">{jsonld_text}</script>'
+    bing_verification = (
+        '<meta name="msvalidate.01" content="3F053D60DF41C4723BAD4DEB0195890B">'
+        if path == "" else ""
+    )
     html = f"""<!doctype html>
 <html lang="{language_code(lang)}"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+{bing_verification}
 <title>{text(title)} — SmallGreen Cloud</title>
 <meta name="description" content="{text(description[:160])}">
 <link rel="canonical" href="{canonical}">
