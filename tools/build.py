@@ -19,7 +19,7 @@ from gen_arch_svg import arch_svg
 from site_content import CONCEPT_DETAILS, CONCEPTS, FAQ, HOME, LANGS, NAV, STATIC_PAGES
 
 
-DEFAULT_BASE_URL = "https://smallgreen-site-9pi.pages.dev"
+DEFAULT_BASE_URL = "https://smallgreen.cooperation.tw"
 LEVEL_LABEL = {
     "en": {"discovered": "Discovered", "community-verified": "Community Verified", "smallgreen-ready": "SmallGreen Ready"},
     "zh-tw": {"discovered": "Discovered", "community-verified": "Community Verified", "smallgreen-ready": "SmallGreen Ready"},

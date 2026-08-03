@@ -87,10 +87,10 @@ class SiteArchitectureTest(unittest.TestCase):
     def test_language_pairs_are_self_canonical_and_cross_linked(self):
         en = self.read("manifesto/index.html")
         zh = self.read("zh-tw/manifesto/index.html")
-        self.assertIn('rel="canonical" href="https://smallgreen-site-9pi.pages.dev/manifesto/"', en)
-        self.assertIn('hreflang="zh-Hant-TW" href="https://smallgreen-site-9pi.pages.dev/zh-tw/manifesto/"', en)
-        self.assertIn('rel="canonical" href="https://smallgreen-site-9pi.pages.dev/zh-tw/manifesto/"', zh)
-        self.assertIn('hreflang="en" href="https://smallgreen-site-9pi.pages.dev/manifesto/"', zh)
+        self.assertIn('rel="canonical" href="https://smallgreen.cooperation.tw/manifesto/"', en)
+        self.assertIn('hreflang="zh-Hant-TW" href="https://smallgreen.cooperation.tw/zh-tw/manifesto/"', en)
+        self.assertIn('rel="canonical" href="https://smallgreen.cooperation.tw/zh-tw/manifesto/"', zh)
+        self.assertIn('hreflang="en" href="https://smallgreen.cooperation.tw/manifesto/"', zh)
         self.assertIn('href="/zh-tw/manifesto/"', en)
         self.assertIn('href="/manifesto/"', zh)
 
@@ -99,7 +99,7 @@ class SiteArchitectureTest(unittest.TestCase):
         self.assertTrue((self.out / "zh-tw" / "services" / "sink" / "index.html").is_file())
         legacy = self.read("s/sink.html")
         self.assertIn('url=/services/sink/', legacy.lower())
-        self.assertIn('rel="canonical" href="https://smallgreen-site-9pi.pages.dev/services/sink/"', legacy)
+        self.assertIn('rel="canonical" href="https://smallgreen.cooperation.tw/services/sink/"', legacy)
 
     def test_shared_assets_are_local_and_present(self):
         self.assertTrue((self.out / "assets" / "site.css").is_file())
@@ -147,7 +147,7 @@ class SiteArchitectureTest(unittest.TestCase):
     def test_machine_outputs_use_new_service_urls_and_list_languages(self):
         cards = json.loads(self.read("cards.json"))
         self.assertEqual(cards["languages"], ["en", "zh-Hant-TW"])
-        self.assertEqual(cards["cards"][0]["url"].split("/services/")[0], "https://smallgreen-site-9pi.pages.dev")
+        self.assertEqual(cards["cards"][0]["url"].split("/services/")[0], "https://smallgreen.cooperation.tw")
         llms = self.read("llms.txt")
         self.assertIn("/services/", llms)
         sitemap = self.read("sitemap.xml")

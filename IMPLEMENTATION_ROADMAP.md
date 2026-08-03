@@ -78,9 +78,9 @@
 
 ### Phase 5　正式部署驗證
 
-狀態：已完成；正式端點 `https://smallgreen-site-9pi.pages.dev` 已通過路由、雙語 404、machine-readable outputs、安全標頭與 Web Analytics beacon 驗證
+狀態：已完成；正式 canonical 端點 `https://smallgreen.cooperation.tw` 與 Cloudflare 備援端點已通過路由、雙語 404、machine-readable outputs、安全標頭與 Web Analytics beacon 驗證
 
-- 使用 Cloudflare 指派的 Pages 正式端點並注入 canonical base URL；自訂網域另案決定
+- 使用自有網域 `smallgreen.cooperation.tw` 作 canonical base URL，Cloudflare Pages 網域保留為技術備援
 - Cloudflare Pages production build 成功
 - 公開首頁、語言路由、服務頁、machine-readable outputs 與 404 行為驗證
 - 驗證 HTTP status、security headers、redirect、sitemap 與 Web Analytics beacon

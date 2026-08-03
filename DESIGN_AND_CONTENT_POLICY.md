@@ -220,7 +220,7 @@ name = "smallgreen-site"
 pages_build_output_dir = "dist"
 ```
 
-正式公開端點目前為 `https://smallgreen-site-9pi.pages.dev`。網站建置期讀取 Registry YAML，產生靜態 HTML、JSON、文字索引與 sitemap；runtime 不儲存使用者資料、無登入、無 cookie、無個人層遙測。未來正式網域上線後，canonical base URL 必須改由建置設定注入，不可永久硬編碼 Pages 網域。
+正式 canonical 端點為 `https://smallgreen.cooperation.tw`，由使用者控制網域身份；`https://smallgreen-site-9pi.pages.dev` 保留作 Cloudflare 技術備援，不作搜尋主網址。網站建置期讀取 Registry YAML，產生靜態 HTML、JSON、文字索引與 sitemap；runtime 不儲存使用者資料、無登入、無 cookie、無個人層遙測。canonical base URL 由建置設定注入，不綁定託管平台配發的子網域。
 
 ### 9.2 核心原則
 
