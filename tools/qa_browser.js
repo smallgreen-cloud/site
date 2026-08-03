@@ -8,7 +8,12 @@ const { AxeBuilder } = require("@axe-core/playwright");
 
 const root = path.resolve(__dirname, "..");
 const dist = path.join(root, "dist");
-const baseUrl = (process.env.QA_BASE_URL || "http://127.0.0.1:8765").replace(/\/$/, "");
+const baseUrlInput = process.argv[2] || "http://127.0.0.1:8765";
+const parsedBaseUrl = new URL(baseUrlInput);
+if (!["http:", "https:"].includes(parsedBaseUrl.protocol)) {
+  throw new Error("QA base URL must use http or https");
+}
+const baseUrl = parsedBaseUrl.href.replace(/\/$/, "");
 const widths = [375, 768, 1280];
 
 function walk(directory) {

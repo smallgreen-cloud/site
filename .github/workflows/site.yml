@@ -75,7 +75,7 @@ jobs:
       - name: Browser QA（RWD／console／WCAG serious＋critical）
         run: |
           python -m http.server 8765 --directory dist > /tmp/site-http.log 2>&1 &
-          QA_BASE_URL=http://127.0.0.1:8765 npm run qa:browser
+          npm run qa:browser -- http://127.0.0.1:8765
       - name: Public artifact sensitive-data scan
         run: |
           python - <<'EOF'

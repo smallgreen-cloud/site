@@ -241,6 +241,12 @@ class SiteArchitectureTest(unittest.TestCase):
         home = self.read("index.html")
         self.assertIn('type="application/atom+xml" href="/feed.xml"', home)
 
+    def test_browser_qa_base_url_is_a_cli_argument_not_an_undeclared_environment_variable(self):
+        qa_script = (ROOT / "tools" / "qa_browser.js").read_text(encoding="utf-8")
+        workflow = (ROOT / ".github" / "workflows" / "site.yml").read_text(encoding="utf-8")
+        self.assertNotIn("process.env.QA_BASE_URL", qa_script)
+        self.assertIn("npm run qa:browser -- http://127.0.0.1:8765", workflow)
+
 
 if __name__ == "__main__":
     unittest.main()
