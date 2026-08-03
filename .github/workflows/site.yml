@@ -1,5 +1,9 @@
 name: site
 
+permissions:
+  contents: read
+  issues: write
+
 on:
   push:
     branches: [main]
@@ -41,16 +45,65 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install --quiet pyyaml
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Architecture tests（bilingual routes／SEO contracts／legacy URLs）
+        run: REGISTRY_PATH=.registry python -m unittest tests/test_site_architecture.py
       - name: Build（registry 卡片 → dist）
         run: python tools/build.py --registry .registry
-      - name: 產物斷言（卡數與 registry 一致）
+      - name: 產物斷言（服務數、雙語頁與機器介面）
         run: |
           python - <<'EOF'
+          import json
           from pathlib import Path
           n_cards = len(list(Path(".registry/cards").glob("*.yaml")))
           html = Path("dist/index.html").read_text()
-          rendered = html.count('<article class="card"')
-          assert rendered >= n_cards, f"rendered {rendered} < cards {n_cards}"
-          assert "smallgreen" in html.lower()
-          print(f"ok: {rendered} rendered / {n_cards} cards")
+          cards = json.loads(Path("dist/cards.json").read_text())
+          assert len(cards["cards"]) == n_cards
+          assert cards["languages"] == ["en", "zh-Hant-TW"]
+          assert len(list(Path("dist/services").glob("*/index.html"))) == n_cards
+          assert len(list(Path("dist/zh-tw/services").glob("*/index.html"))) == n_cards
+          assert Path("dist/manifesto/index.html").is_file()
+          assert Path("dist/zh-tw/manifesto/index.html").is_file()
+          assert "SmallGreen" in html
+          print(f"ok: {n_cards} services × 2 languages")
           EOF
+      - name: Browser QA（RWD／console／WCAG serious＋critical）
+        run: |
+          python -m http.server 8765 --directory dist > /tmp/site-http.log 2>&1 &
+          QA_BASE_URL=http://127.0.0.1:8765 npm run qa:browser
+      - name: Public artifact sensitive-data scan
+        run: |
+          python - <<'EOF'
+          import re
+          from pathlib import Path
+          patterns = {
+              # Keep the detector effective without making this workflow look like a key to pre-commit scanners.
+              "private key": re.compile(r"BEGIN (?:RSA |EC |OPENSSH )?" + "PRIV" + "ATE KEY"),
+              "Cloudflare token": re.compile(r"\b[A-Za-z0-9_-]{40}\b"),
+              "private IPv4": re.compile(r"\b(?:10\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.)"),
+          }
+          failures = []
+          for path in Path("dist").rglob("*"):
+              if not path.is_file() or path.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp"}:
+                  continue
+              text = path.read_text(encoding="utf-8", errors="ignore")
+              for label, pattern in patterns.items():
+                  if pattern.search(text): failures.append(f"{path}: {label}")
+          if failures: raise SystemExit("\n".join(failures))
+          print("public artifact scan passed")
+          EOF
+      - name: Create failure alert issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="site CI failed on ${GITHUB_REF_NAME}"
+          existing="$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty')"
+          if [ -z "$existing" ]; then
+            gh issue create --title "$title" --body "Workflow ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} failed."
+          fi

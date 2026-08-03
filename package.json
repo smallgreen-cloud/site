@@ -1,0 +1,11 @@
+{
+  "name": "smallgreen-site-qa",
+  "private": true,
+  "scripts": {
+    "qa:browser": "node tools/qa_browser.js"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "playwright": "^1.54.2"
+  }
+}
