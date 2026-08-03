@@ -97,6 +97,13 @@ jobs:
           if failures: raise SystemExit("\n".join(failures))
           print("public artifact scan passed")
           EOF
+      - name: Store verified Pages artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-dist
+          path: dist
+          if-no-files-found: error
+          retention-days: 1
       - name: Create failure alert issue
         if: failure()
         env:
@@ -106,4 +113,31 @@ jobs:
           existing="$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty')"
           if [ -z "$existing" ]; then
             gh issue create --title "$title" --body "Workflow ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} failed."
+          fi
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [conformance, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download verified Pages artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pages-dist
+          path: dist
+      - name: Deploy main to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=smallgreen-site --branch=main
+      - name: Create deployment failure alert issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="site deployment failed on ${GITHUB_REF_NAME}"
+          existing="$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty')"
+          if [ -z "$existing" ]; then
+            gh issue create --title "$title" --body "Workflow ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} failed during Cloudflare Pages deployment."
           fi

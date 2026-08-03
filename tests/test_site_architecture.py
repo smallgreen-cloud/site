@@ -247,6 +247,16 @@ class SiteArchitectureTest(unittest.TestCase):
         self.assertNotIn("process.env.QA_BASE_URL", qa_script)
         self.assertIn("npm run qa:browser -- http://127.0.0.1:8765", workflow)
 
+    def test_cloudflare_deploy_runs_only_after_main_ci_with_repository_secrets(self):
+        workflow = (ROOT / ".github" / "workflows" / "site.yml").read_text(encoding="utf-8")
+        self.assertIn("uses: actions/upload-artifact@v4", workflow)
+        self.assertIn("uses: actions/download-artifact@v4", workflow)
+        self.assertIn("needs: [conformance, build]", workflow)
+        self.assertIn("github.ref == 'refs/heads/main'", workflow)
+        self.assertIn("apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}", workflow)
+        self.assertIn("accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}", workflow)
+        self.assertIn("pages deploy dist --project-name=smallgreen-site --branch=main", workflow)
+
 
 if __name__ == "__main__":
     unittest.main()
