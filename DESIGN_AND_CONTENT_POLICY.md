@@ -1,6 +1,6 @@
 # SmallGreen Cloud 網站設計與內容開放政策 v1.0
 
-> **狀態：已定稿並套用至正式網站；需長期累積的分析基線與外部搜尋平台驗證依路線圖追蹤。**
+> **狀態：已定稿並套用至正式網站；外部搜尋平台驗證已完成，長期分析基線依路線圖追蹤。**
 > 適用範圍：SmallGreen Cloud 官方網站、服務卡詳頁、概念頁、規格導覽、公開資料介面及其衍生分享素材。
 > 真相源分工：Schema、契約、測試及 Evidence Pack 原始資料以 GitHub 為準；網站負責可讀呈現、搜尋發現與 Agent 導覽。
 
@@ -222,6 +222,8 @@ pages_build_output_dir = "dist"
 
 正式 canonical 端點為 `https://smallgreen.cooperation.tw`，由使用者控制網域身份；`https://smallgreen-site-9pi.pages.dev` 保留作 Cloudflare 技術備援，不作搜尋主網址。網站建置期讀取 Registry YAML，產生靜態 HTML、JSON、文字索引與 sitemap；runtime 不儲存使用者資料、無登入、無 cookie、無個人層遙測。canonical base URL 由建置設定注入，不綁定託管平台配發的子網域。
 
+GitHub `smallgreen-cloud/site` 的 `main` 是正式部署真相源。每次主線更新先通過契約檢核、雙語／SEO 架構測試、三種 viewport Browser QA、無障礙檢查與公開產物敏感資料掃描，再由 GitHub Actions 以 Wrangler 部署 Cloudflare Pages。Direct Upload 專案不轉換成 Cloudflare 原生 Git integration；自動部署責任明確留在版本庫 workflow。
+
 ### 9.2 核心原則
 
 > **公開網站不等於所有內部資料都公開。公開的是標準、可驗證事實與經清理的證據，不公開的是身份、秘密、私人運行資料與會增加風險的細節。**
@@ -267,10 +269,13 @@ Crawler 分為三種控制面：
 
 `robots.txt` 是存取偏好，不是授權文件。授權仍以每個 repo／資料集的 LICENSE、頁面聲明和內容分級為準。Search crawler 與 Training crawler 必須能分開設定；不得用「全部 Allow」取代政策判斷。
 
+Cloudflare AI Crawl Control 目前只用於觀察與分類 crawler。Managed robots.txt 維持關閉，因其全站單一訓練訊號會覆蓋本站按 crawler 與路徑區分的政策；公開站產生的 `robots.txt` 才是目前 crawler 存取偏好的可版本化真相源。
+
 ### 9.7 分析與隱私
 
 - 第一版納入 Cloudflare Web Analytics、Cloudflare 邊緣／AI crawler 聚合指標、Google Search Console 與 Bing Webmaster，作為 SEO／AEO 的必要驗證閉環。
 - Cloudflare Web Analytics 只允許 Pages 自動注入的官方 beacon；不使用 cookie、使用者 ID、自訂事件或個人層追蹤。
+- Google Search Console 與 Bing Webmaster 均已驗證正式網域並成功讀取 Sitemap，各自探索 52 個 URL；搜尋與 AI 成效報表仍需等待資料累積。
 - 搜尋成效、AI referral、crawler access 與一般 page view 必須分開解讀，不得把 bot request 當成人類流量，也不得以 page view 推估 search impression。
 - 只使用平台彙總資料，不把個人層事件、query string 或原始請求紀錄回寫 Registry 或 Evidence Dataset。
 - 若新增任何分析端點，必須先更新本政策、資料流揭露、`external_services` 與 conformance 檢查；dashboard 本身不構成告知。
@@ -303,4 +308,5 @@ Crawler 分為三種控制面：
 
 文件版本：v1.0
 定稿日期：2026-08-03
+現況更新：2026-08-04
 Owner：SmallGreen Cloud maintainers
