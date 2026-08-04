@@ -1,9 +1,30 @@
 # SmallGreen Cloud 網站實作路線圖
 
-> 狀態：正式站已部署；30 天分析基線與搜尋平台驗證持續累積
-> 更新日期：2026-08-03
+> 狀態：網站工程、正式部署與搜尋平台驗證已完成；30 天 SEO／AEO 分析基線持續累積
+> 更新日期：2026-08-04
 > 範圍：公開網站、SEO、AEO、Cloudflare Pages 與品質閘門
 > 排除：論文與沙盒工作
+
+## 目前上線基準（2026-08-04）
+
+- 正式 canonical：`https://smallgreen.cooperation.tw`
+- Cloudflare 技術備援：`https://smallgreen-site-9pi.pages.dev`
+- 原始碼：GitHub 公開 repo `smallgreen-cloud/site`；`main` 為唯一正式部署來源
+- 部署：GitHub Actions 完成契約檢核、網站建置、Browser QA、公開產物敏感資料掃描後，以 Wrangler 部署既有 Cloudflare Pages Direct Upload 專案 `smallgreen-site`
+- 自動部署已由 PR #3 建立；自訂網域與 portable canonical 由 PR #4 完成；Bing HTML 驗證由 PR #5 完成
+- 目前建置輸出：13 個服務、6 個概念、68 個 HTML 頁面；架構測試 20 項
+- Cloudflare Web Analytics 已啟用，正式站 beacon、CSP 與 HTTP 200 已驗證
+- Cloudflare AI Crawl Control 採監測模式；Managed robots.txt 關閉，避免以全站單一訊號覆蓋目前按 crawler 與路徑區分的授權政策
+- Google Search Console Domain property 已驗證；`sitemap.xml` 狀態成功，已探索 52 個網頁
+- Bing Webmaster 已以 HTML meta 驗證網站所有權；`sitemap.xml` 狀態成功，已探索 52 個 URL
+- Bing DNS 驗證 CNAME 保留為第二驗證路徑；首頁 `msvalidate.01` meta 保留為主要可重現驗證路徑
+- 尚未完成的外部結果只有資料成熟度：搜尋／AI 成效資料與正式站連續 30 天分析基線
+
+| 里程碑 | PR | Main merge commit | 驗證結果 |
+|---|---|---|---|
+| GitHub Actions → Cloudflare Pages 自動部署 | [#3](https://github.com/smallgreen-cloud/site/pull/3) | `40ae3ab` | Main push 觸發建置與 production deploy |
+| 自有 canonical 網域與 Pages 備援 | [#4](https://github.com/smallgreen-cloud/site/pull/4) | `3681d44` | 兩個 hostname HTTP 200；canonical 與 sitemap 只指向自有網域 |
+| Bing Webmaster HTML 驗證 | [#5](https://github.com/smallgreen-cloud/site/pull/5) | `0d02416` | CI、Browser QA 與 production deploy 成功；Bing 顯示 Site addition successful |
 
 ## 執行順序
 
@@ -32,7 +53,7 @@
 
 ### Phase 3　Cloudflare 聚合分析與 SEO／AEO 基線
 
-狀態：Cloudflare Web Analytics 已啟用且 beacon 已於正式站驗證；30 天基線尚在累積。Google Search Console、Bing Webmaster 與自訂網域層的 AI Crawl Control，待正式自訂網域及對應平台驗證權限就緒後設定
+狀態：資料源與平台驗證均已完成；30 天基線尚在累積
 
 採三個互補資料面，不建立使用者層追蹤
 
@@ -45,9 +66,12 @@
    - 觀察 request、熱門路徑、crawler、AI referral 與目的頁群組
    - 將 Search crawler、Agent access 與 Model Training crawler 分開報告
    - 不把 bot request 誤當成人類 page view
+   - AI Crawl Control 保持監測，不啟用會覆蓋細緻路徑政策的 Managed robots.txt
 3. **Google Search Console／Bing Webmaster**
    - 追蹤 impression、click、query、index coverage 與 sitemap 狀態
    - 搜尋曝光與點擊不得以 Cloudflare page view 推估
+   - Google Domain property 與 Sitemap 已成功；目前探索 52 個網頁
+   - Bing 網站所有權與 Sitemap 均已成功，已探索 52 個 URL
 
 每週基線報告至少包含：
 
@@ -62,6 +86,8 @@
 隱私邊界：只使用聚合資料，不公開原始請求紀錄，不收 query string、自訂事件、使用者 ID、部署紀錄或個人層行為。任何分析能力變更都必須先更新內容政策與資料流揭露。
 
 完成條件：正式站連續收集 30 天基線，能分辨人類搜尋、AI referral 與 crawler access
+
+目前唯一未達成條件是連續 30 天觀測期；不得在資料成熟前填入推估流量、排名或 AI 引用成效。
 
 ### Phase 4　CI QA 與安全標頭
 
@@ -84,7 +110,7 @@
 - Cloudflare Pages production build 成功
 - 公開首頁、語言路由、服務頁、machine-readable outputs 與 404 行為驗證
 - 驗證 HTTP status、security headers、redirect、sitemap 與 Web Analytics beacon
-- 正式自訂網域確定後，提交 sitemap 至 Google Search Console 與 Bing Webmaster
+- Sitemap 已提交至 Google Search Console 與 Bing Webmaster；兩者均已成功讀取並探索 52 個 URL
 - 記錄可回復的前一個 Pages deployment
 
 完成條件：正式端點通過完整 smoke test，且 SEO／AEO 與聚合分析開始建立基線
