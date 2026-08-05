@@ -177,6 +177,9 @@ Spec v0.2.1 · Verified 2026-08-03 · Commit 8a0372a
 - 互動目標至少 44×44 CSS px；hover 不能是唯一提示。
 - 所有操作支援鍵盤；focus 順序與視覺順序一致。
 - 375、768、1280 px 三種 viewport 為每次重大視覺修改的最低 QA。
+- 三種 viewport 都要分別檢查整頁水平 overflow 與指定標題行的 `scrollWidth <= clientWidth + 1`；Grid／Flex 裁切不會必然形成整頁捲軸。
+- 中文寬度不得用 `ch` 當作中文字數；以實際 production font stack、容器與 rendered width 驗證。
+- 每次重大視覺修改必須在部署前查看 production build 截圖，部署後再查看正式網址截圖。
 - 200% zoom 不得遺失內容或操作。
 - 中文標題檢查孤字行；複雜表格在 mobile 改為 vertical card／definition list。
 - 圖片有具體 alt；裝飾圖使用空 alt；架構圖另有可讀文字摘要。
@@ -228,6 +231,8 @@ pages_build_output_dir = "dist"
 正式 canonical 端點為 `https://smallgreen.cooperation.tw`，由使用者控制網域身份；`https://smallgreen-site-9pi.pages.dev` 保留作 Cloudflare 技術備援，不作搜尋主網址。網站建置期讀取 Registry YAML，產生靜態 HTML、JSON、文字索引與 sitemap；runtime 不儲存使用者資料、無登入、無 cookie、無個人層遙測。canonical base URL 由建置設定注入，不綁定託管平台配發的子網域。
 
 GitHub `smallgreen-cloud/site` 的 `main` 是正式部署真相源。每次主線更新先通過契約檢核、雙語／SEO 架構測試、三種 viewport Browser QA、無障礙檢查與公開產物敏感資料掃描，再由 GitHub Actions 以 Wrangler 部署 Cloudflare Pages。Direct Upload 專案不轉換成 Cloudflare 原生 Git integration；自動部署責任明確留在版本庫 workflow。
+
+所有 CSS／JS 必須使用內容 hash 或等效的版本化 URL，避免新 HTML 與舊資產混用。部署完成後須同時驗證正式自訂網域與 Pages 備援網域，確認 HTTP 200、HTML 引用本次資產版本，並以實際畫面檢查標題裁切、Grid／Flex 重疊與主要互動區。部署指令成功但 production 畫面未驗證時，不得宣告完成。
 
 ### 9.2 核心原則
 
@@ -293,7 +298,8 @@ Cloudflare AI Crawl Control 目前只用於觀察與分類 crawler。Managed rob
 - 決定性建置：相同 Registry 輸入產出相同 HTML／JSON。
 - HTML 結構、內部連結、canonical、`hreflang`、sitemap 與 JSON-LD 驗證。
 - WCAG AA contrast、鍵盤、focus、alt、landmark 與 200% zoom 檢查。
-- 375／768／1280 px 截圖與橫向 overflow 檢查。
+- 375／768／1280 px 截圖、整頁 overflow、標題行 clipping 與 Grid／Flex 重疊檢查。
+- production build 與正式網址各做一次視覺驗證；正式 HTML 的 CSS／JS 資產版本必須與本次 build 一致。
 - 中文孤字行、英文長 token、表格 mobile 替代版檢查。
 - 零非必要外部 runtime script、style、font、image 請求；唯一分析例外為政策明列的 Cloudflare Web Analytics 官方 beacon，並須通過 CSP 與資料流揭露檢查。
 - 公開內容敏感資料與 secret 掃描。
