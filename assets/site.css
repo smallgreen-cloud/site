@@ -183,6 +183,6 @@ summary { cursor: pointer; font-weight: 800; min-height: 2.75rem; }
 }
 
 @media (max-width: 30rem) {
-  :lang(zh-Hant) h1 { font-size: clamp(1.85rem, 7.8vw, 2.5rem); }
+  :lang(zh-Hant) h1 { font-size: clamp(1.8rem, 7.6vw, 2.5rem); }
   :lang(zh-Hant) .title-line, :lang(zh-Hant) .hero-title-line { white-space: nowrap; }
 }
