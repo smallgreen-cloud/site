@@ -255,14 +255,15 @@ def static_page_body(page: dict, lang: str) -> str:
 
 
 def concepts_index_body(lang: str) -> str:
-    title = "Canonical concepts for Small Software." if lang == "en" else "Small Software 的核心定義。"
+    title = "Canonical concepts for Small Software" if lang == "en" else "Small Software 核心定義"
+    title_html = title_lines([title] if lang == "en" else ["Small Software", "核心定義"])
     lede = ("One stable URL for each term, with scope, limits and machine-readable references."
             if lang == "en" else "每個名詞只有一個穩定 URL，明示範圍、限制與機器可讀參考。")
     items = []
     for index, (slug, copy) in enumerate(CONCEPTS.items(), 1):
         heading, answer = copy[lang]
         items.append(f'<a class="concept-item" href="{route(lang, f"concepts/{slug}")}"><small>CONCEPT {index:02}</small><div><h2>{text(heading)}</h2><p>{text(answer)}</p></div></a>')
-    return f'<header class="page-hero"><div class="shell"><p class="kicker">CONCEPTS</p><h1 class="page-title">{text(title)}</h1><p class="page-lede">{text(lede)}</p></div></header><section class="section"><div class="shell"><div class="concept-grid">{"".join(items)}</div></div></section>'
+    return f'<header class="page-hero"><div class="shell"><p class="kicker">CONCEPTS</p><h1 class="page-title">{title_html}</h1><p class="page-lede">{text(lede)}</p></div></header><section class="section"><div class="shell"><div class="concept-grid">{"".join(items)}</div></div></section>'
 
 
 def concept_body(slug: str, lang: str) -> str:
@@ -319,7 +320,7 @@ def evidence_index_body(cards: list, lang: str) -> str:
 
 
 def services_index_body(cards: list, lang: str) -> str:
-    title = "A service index built from evidence." if lang == "en" else "依證據建立的服務索引。"
+    title = "A service index built from evidence" if lang == "en" else "依證據建立的服務索引"
     lede = ("Compare purpose, resource budget, maintenance state and verification date."
             if lang == "en" else "直接比較用途、資源預算、維護狀態與驗證日期。")
     return f'<header class="page-hero"><div class="shell"><p class="kicker">SERVICES / {len(cards)}</p><h1 class="page-title">{text(title)}</h1><p class="page-lede">{text(lede)}</p></div></header><section class="section"><div class="shell">{service_rows(cards, lang)}</div></section>'
@@ -377,7 +378,7 @@ def service_detail_body(card: dict, lang: str) -> str:
 
 
 def faq_body(lang: str) -> str:
-    title = "Questions that should be answered before deployment." if lang == "en" else "部署前就應該回答的問題。"
+    title = "Questions that should be answered before deployment" if lang == "en" else "部署前就應該回答的問題"
     items = "".join(f'<details><summary>{text(q)}</summary><p>{text(a)}</p></details>' for q, a in FAQ[lang])
     return f'<header class="page-hero"><div class="shell"><p class="kicker">FAQ</p><h1 class="page-title">{text(title)}</h1></div></header><section class="section"><div class="shell prose">{items}</div></section>'
 

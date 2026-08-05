@@ -23,23 +23,25 @@ NAV = {
 HOME = {
     "en": {
         "eyebrow": "01 / OWNERSHIP, NOT ANOTHER PLATFORM",
-        "title": "The ownership and deployment layer for Small Software.",
+        "title": "The ownership and deployment layer for Small Software",
         "lede": "Community-verified, serverless-first, resource-budgeted software you can run in your own account.",
         "primary": "Explore verified services",
         "secondary": "Read the standard",
         "how_label": "02 / THE TRUST PATH",
         "how_title_lines": ["Humans read Service Cards", "Agents read Deployment Contracts"],
         "services_label": "03 / VERIFIED SERVICE INDEX",
-        "services_title": "Choose by evidence, not by promise.",
+        "services_title": "Choose by evidence not by promise",
+        "services_title_lines": ["Choose by evidence", "Not by promise"],
         "services_text": "Every listing exposes its resource budget, data flow, verification date and known limits.",
         "trust_label": "04 / PUBLIC BY DESIGN",
-        "trust_title": "The standard is open. Your deployment stays yours.",
+        "trust_title": "The standard is open Your deployment stays yours",
+        "trust_title_lines": ["The standard is open", "Your deployment stays yours"],
         "trust_text": "We publish schemas, service cards and sanitized evidence. We do not collect deployment telemetry or user data.",
     },
     "zh-tw": {
         "eyebrow": "01 / 擁有，而不是再多一個平台",
         "title": "我們正在建立小型軟體的所有權與部署層",
-        "title_lines": ["我們正在建立小型軟體", "的所有權與部署層"],
+        "title_lines": ["我們正在建立", "小型軟體的所有權與部署層"],
         "lede": "經社群驗證、Serverless 優先、受資源預算約束，部署在你自己的帳號。",
         "primary": "探索已驗證服務",
         "secondary": "閱讀標準",
@@ -59,7 +61,8 @@ HOME = {
 STATIC_PAGES = {
     "manifesto": {
         "en": {
-            "label": "MANIFESTO", "title": "Small Software should be owned, not rented.",
+            "label": "MANIFESTO", "title": "Small Software should be owned not rented",
+            "title_lines": ["Small Software should be owned", "Not rented"],
             "lede": "AI made software easier to create. It did not make deployment, trust or maintenance disappear.",
             "sections": [
                 ("The gap", "Small tools are repeatedly rebuilt, then abandoned when operating them becomes the hard part. SmallGreen Cloud turns deployment and maintenance into an explicit, testable contract."),
@@ -68,8 +71,8 @@ STATIC_PAGES = {
             ],
         },
         "zh-tw": {
-            "label": "宣言", "title": "小型軟體應該被擁有 而不是被租用",
-            "title_lines": ["小型軟體應該被擁有", "而不是被租用"],
+            "label": "宣言", "title": "小型軟體應該被擁有 不該被租用",
+            "title_lines": ["小型軟體應該被擁有", "不該被租用"],
             "lede": "AI 降低了開發門檻，卻沒有讓部署、信任與維護自動消失。",
             "sections": [
                 ("斷層", "小工具被反覆重造，又在真正需要運營時遭到放棄。SmallGreen Cloud 把部署與維護轉成明確、可測試的契約。"),
@@ -80,7 +83,8 @@ STATIC_PAGES = {
     },
     "standard": {
         "en": {
-            "label": "STANDARD", "title": "A contract, a gate, a person and a feedback loop.",
+            "label": "STANDARD", "title": "Contract gate and human judgment form a feedback loop",
+            "title_lines": ["Contract gate and human judgment", "Form a feedback loop"],
             "lede": "SmallGreen Spec defines what can be checked before deployment, during acceptance and at teardown.",
             "sections": [
                 ("Profiles", "Small App and Pipeline profiles define eligible resource and execution patterns."),
@@ -89,8 +93,8 @@ STATIC_PAGES = {
             ],
         },
         "zh-tw": {
-            "label": "標準", "title": "契約 閘門 人與回饋迴圈",
-            "title_lines": ["契約 閘門 人", "與回饋迴圈"],
+            "label": "標準", "title": "契約 閘門 人形成回饋迴圈",
+            "title_lines": ["契約 閘門 人", "形成回饋迴圈"],
             "lede": "SmallGreen Spec 定義部署前、驗收中與移除後可以被機械檢查的條件。",
             "sections": [
                 ("Profile", "Small App 與 Pipeline Profile 定義可接受的資源與執行模式。"),
@@ -101,7 +105,8 @@ STATIC_PAGES = {
     },
     "evidence": {
         "en": {
-            "label": "EVIDENCE", "title": "Verification is a public trail, not a badge.",
+            "label": "EVIDENCE", "title": "Verification is a public trail not a badge",
+            "title_lines": ["Verification is a public trail", "Not a badge"],
             "lede": "A result is only as useful as its commit, environment, acceptance checks and teardown record.",
             "sections": [
                 ("What is public", "Versioned Service Cards, sanitized Evidence Packs, verification dates, known limits and machine-derived architecture diagrams."),
@@ -145,24 +150,24 @@ STATIC_PAGES = {
 
 CONCEPTS = {
     "small-software": {
-        "en": ("What is Small Software?", "Focused software with a bounded purpose, small operational footprint and an explicit path to ownership and exit."),
-        "zh-tw": ("什麼是 Small Software？", "用途聚焦、運營足跡小，並具有明確所有權與退場路徑的軟體。"),
+        "en": ("What is Small Software", "Focused software with a bounded purpose, small operational footprint and an explicit path to ownership and exit."),
+        "zh-tw": ("什麼是 Small Software", "用途聚焦、運營足跡小，並具有明確所有權與退場路徑的軟體。"),
     },
     "ownership-and-deployment-layer": {
         "en": ("The ownership and deployment layer", "The contracts, evidence and tools that turn an open-source repository into an owned and maintainable service."),
         "zh-tw": ("所有權與部署層", "把開源 Repo 轉換成使用者自己擁有且可維護服務的契約、證據與工具層。"),
     },
     "deploy-agent": {
-        "en": ("What is a Deploy Agent?", "A guide that follows a verified contract to deploy, test and maintain a service in the user's account."),
-        "zh-tw": ("什麼是 Deploy Agent？", "依照已驗證契約，在使用者帳號中部署、測試與維護服務的引導者。"),
+        "en": ("What is a Deploy Agent", "A guide that follows a verified contract to deploy, test and maintain a service in the user's account."),
+        "zh-tw": ("什麼是 Deploy Agent", "依照已驗證契約，在使用者帳號中部署、測試與維護服務的引導者。"),
     },
     "service-card": {
-        "en": ("What is a Service Card?", "The human-readable view of purpose, resource budget, data flow, verification and limitations."),
-        "zh-tw": ("什麼是服務卡？", "以人能理解的方式呈現用途、資源預算、資料流、驗證與限制。"),
+        "en": ("What is a Service Card", "The human-readable view of purpose, resource budget, data flow, verification and limitations."),
+        "zh-tw": ("什麼是服務卡", "以人能理解的方式呈現用途、資源預算、資料流、驗證與限制。"),
     },
     "deployment-contract": {
-        "en": ("What is a Deployment Contract?", "Machine-readable facts and checks for profile, acceptance and maintenance."),
-        "zh-tw": ("什麼是部署契約？", "描述 Profile、驗收與維護事實及檢查條件的機器可讀文件。"),
+        "en": ("What is a Deployment Contract", "Machine-readable facts and checks for profile, acceptance and maintenance."),
+        "zh-tw": ("什麼是部署契約", "描述 Profile、驗收與維護事實及檢查條件的機器可讀文件。"),
     },
     "resource-budget": {
         "en": ("Free tier as a resource budget", "Free tier is treated as a measurable operating constraint, with limits and fallback behavior made explicit."),

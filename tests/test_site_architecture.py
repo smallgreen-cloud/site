@@ -49,6 +49,29 @@ class VisibleTextCollector(HTMLParser):
         return "".join(self.parts)
 
 
+class HeadingCollector(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.headings = []
+        self._tag = None
+        self._parts = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in {"h1", "h2", "h3"}:
+            self._tag = tag
+            self._parts = []
+
+    def handle_data(self, data):
+        if self._tag:
+            self._parts.append(data)
+
+    def handle_endtag(self, tag):
+        if tag == self._tag:
+            self.headings.append("".join(self._parts).strip())
+            self._tag = None
+            self._parts = []
+
+
 class SiteArchitectureTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -199,10 +222,29 @@ class SiteArchitectureTest(unittest.TestCase):
                 self.assertNotRegex(parser.text, forbidden)
 
         home = self.read("zh-tw/index.html")
-        self.assertIn('<span class="hero-title-line">我們正在建立小型軟體</span>', home)
-        self.assertIn('<span class="hero-title-line">的所有權與部署層</span>', home)
+        self.assertIn('<span class="hero-title-line">我們正在建立</span>', home)
+        self.assertIn('<span class="hero-title-line">小型軟體的所有權與部署層</span>', home)
         self.assertIn('<span class="title-line">依證據選擇</span>', home)
         self.assertIn('<span class="title-line">不依承諾選擇</span>', home)
+
+    def test_all_heading_levels_omit_prose_punctuation(self):
+        forbidden = re.compile(r"[。，；：！？.!?,;:]")
+        for path in self.out.rglob("*.html"):
+            parser = HeadingCollector()
+            parser.feed(path.read_text(encoding="utf-8"))
+            for heading in parser.headings:
+                with self.subTest(path=path.relative_to(self.out), heading=heading):
+                    self.assertNotRegex(heading, forbidden)
+
+    def test_authored_title_lines_have_complete_semantic_edges(self):
+        forbidden_edges = {"的", "與", "和", "或", "而", "及", "之"}
+        for relative in ("zh-tw/index.html", "zh-tw/manifesto/index.html", "zh-tw/standard/index.html"):
+            html = self.read(relative)
+            lines = re.findall(r'<span class="(?:hero-)?title-line">([^<]+)</span>', html)
+            for line in lines:
+                with self.subTest(path=relative, line=line):
+                    self.assertNotIn(line[0], forbidden_edges)
+                    self.assertNotIn(line[-1], forbidden_edges)
 
     def test_concept_pages_include_complete_aeo_structure(self):
         page = self.read("concepts/small-software/index.html")
