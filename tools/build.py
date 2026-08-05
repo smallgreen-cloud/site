@@ -7,6 +7,7 @@ Source ownership:
 - This renderer validates, escapes and emits deterministic static artifacts.
 """
 import argparse
+import hashlib
 import json
 import shutil
 from html import escape
@@ -20,6 +21,7 @@ from site_content import CONCEPT_DETAILS, CONCEPTS, FAQ, HOME, LANGS, NAV, STATI
 
 
 DEFAULT_BASE_URL = "https://smallgreen.cooperation.tw"
+SOURCE_ASSETS = Path(__file__).resolve().parent.parent / "assets"
 LEVEL_LABEL = {
     "en": {"discovered": "Discovered", "community-verified": "Community Verified", "smallgreen-ready": "SmallGreen Ready"},
     "zh-tw": {"discovered": "Discovered", "community-verified": "Community Verified", "smallgreen-ready": "SmallGreen Ready"},
@@ -36,6 +38,12 @@ def text(value) -> str:
 
 def title_lines(lines: list, class_name: str = "title-line") -> str:
     return "".join(f'<span class="{class_name}">{text(line)}</span>' for line in lines)
+
+
+def asset_url(filename: str) -> str:
+    """Return a content-versioned URL so new HTML never reuses stale CSS or JS."""
+    digest = hashlib.sha256((SOURCE_ASSETS / filename).read_bytes()).hexdigest()[:12]
+    return f"/assets/{filename}?v={digest}"
 
 
 def clean_zh_display_copy(html: str) -> str:
@@ -147,13 +155,13 @@ def layout(*, lang: str, active: str, path: str, title: str, description: str,
 <meta property="og:description" content="{text(description[:160])}">
 <meta property="og:type" content="website"><meta property="og:url" content="{canonical}">
 <meta name="twitter:card" content="summary">
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="{asset_url('site.css')}">
 {structured}</head><body>
 <a class="skip-link" href="#main">{'跳至主要內容' if lang == 'zh-tw' else 'Skip to content'}</a>
 {nav_html(lang, active, path)}
 <main id="main">{body}</main>
 {footer_html(lang)}
-<script src="/assets/site.js" defer></script>
+<script src="{asset_url('site.js')}" defer></script>
 </body></html>
 """
     return clean_zh_display_copy(html) if lang == "zh-tw" else html
@@ -412,7 +420,7 @@ def write_cloudflare_outputs(cards: list, out: Path) -> None:
     (out / "_headers").write_text(headers, encoding="utf-8")
     redirects = "".join(f"/s/{card['id']}.html /services/{card['id']}/ 301\n" for card in cards)
     (out / "_redirects").write_text(redirects, encoding="utf-8")
-    not_found = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Page not found — SmallGreen Cloud</title><link rel="stylesheet" href="/assets/site.css"></head><body><main id="main"><header class="page-hero"><div class="shell"><p class="kicker">404</p><h1 class="page-title">Page not found<br><span lang="zh-Hant">找不到頁面</span></h1><p class="page-lede">The requested path does not exist<br><span lang="zh-Hant">這個網址沒有對應內容</span></p><div class="actions"><a class="button primary" href="/">English home</a><a class="button" href="/zh-tw/">繁體中文首頁</a></div></div></header></main></body></html>"""
+    not_found = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Page not found — SmallGreen Cloud</title><link rel="stylesheet" href="{asset_url('site.css')}"></head><body><main id="main"><header class="page-hero"><div class="shell"><p class="kicker">404</p><h1 class="page-title">Page not found<br><span lang="zh-Hant">找不到頁面</span></h1><p class="page-lede">The requested path does not exist<br><span lang="zh-Hant">這個網址沒有對應內容</span></p><div class="actions"><a class="button primary" href="/">English home</a><a class="button" href="/zh-tw/">繁體中文首頁</a></div></div></header></main></body></html>"""
     (out / "404.html").write_text(not_found, encoding="utf-8")
 
 
@@ -512,9 +520,8 @@ def build(registry: Path, out: Path, base_url: str = DEFAULT_BASE_URL) -> None:
     out.mkdir(parents=True, exist_ok=True)
     assets = out / "assets"
     assets.mkdir(exist_ok=True)
-    source_assets = Path(__file__).resolve().parent.parent / "assets"
-    shutil.copyfile(source_assets / "site.css", assets / "site.css")
-    shutil.copyfile(source_assets / "site.js", assets / "site.js")
+    shutil.copyfile(SOURCE_ASSETS / "site.css", assets / "site.css")
+    shutil.copyfile(SOURCE_ASSETS / "site.js", assets / "site.js")
     evidence_assets = assets / "evidence"
     for card in cards:
         screenshot = (card.get("images") or {}).get("screenshot")

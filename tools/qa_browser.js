@@ -50,8 +50,16 @@ async function main() {
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
       );
-      if (!response || response.status() !== 200 || overflow > 1 || consoleErrors.length) {
-        failures.push({ width, route, status: response && response.status(), overflow, consoleErrors });
+      const clippedTitleLines = await page.evaluate(() =>
+        [...document.querySelectorAll(".hero-title-line, .title-line")]
+          .filter((element) => element.scrollWidth - element.clientWidth > 1)
+          .map((element) => ({
+            text: element.textContent.trim(),
+            overflow: element.scrollWidth - element.clientWidth,
+          })),
+      );
+      if (!response || response.status() !== 200 || overflow > 1 || clippedTitleLines.length || consoleErrors.length) {
+        failures.push({ width, route, status: response && response.status(), overflow, clippedTitleLines, consoleErrors });
       }
       if (width === 375) {
         const axe = await new AxeBuilder({ page }).analyze();

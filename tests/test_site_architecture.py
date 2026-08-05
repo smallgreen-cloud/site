@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -128,8 +129,10 @@ class SiteArchitectureTest(unittest.TestCase):
         self.assertTrue((self.out / "assets" / "site.css").is_file())
         self.assertTrue((self.out / "assets" / "site.js").is_file())
         home = self.read("index.html")
-        self.assertIn('href="/assets/site.css"', home)
-        self.assertIn('src="/assets/site.js"', home)
+        css_hash = hashlib.sha256((self.out / "assets" / "site.css").read_bytes()).hexdigest()[:12]
+        js_hash = hashlib.sha256((self.out / "assets" / "site.js").read_bytes()).hexdigest()[:12]
+        self.assertIn(f'href="/assets/site.css?v={css_hash}"', home)
+        self.assertIn(f'src="/assets/site.js?v={js_hash}"', home)
         self.assertNotRegex(home, r'<(?:script|img)[^>]+(?:src)="https?://')
         self.assertNotRegex(home, r'<link[^>]+href="https?://[^\"]+\.(?:css|woff2?)')
 
