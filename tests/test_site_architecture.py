@@ -111,10 +111,10 @@ class SiteArchitectureTest(unittest.TestCase):
     def test_language_pairs_are_self_canonical_and_cross_linked(self):
         en = self.read("manifesto/index.html")
         zh = self.read("zh-tw/manifesto/index.html")
-        self.assertIn('rel="canonical" href="https://smallgreen.cooperation.tw/manifesto/"', en)
-        self.assertIn('hreflang="zh-Hant-TW" href="https://smallgreen.cooperation.tw/zh-tw/manifesto/"', en)
-        self.assertIn('rel="canonical" href="https://smallgreen.cooperation.tw/zh-tw/manifesto/"', zh)
-        self.assertIn('hreflang="en" href="https://smallgreen.cooperation.tw/manifesto/"', zh)
+        self.assertIn('rel="canonical" href="https://smallgreen-site.pages.dev/manifesto/"', en)
+        self.assertIn('hreflang="zh-Hant-TW" href="https://smallgreen-site.pages.dev/zh-tw/manifesto/"', en)
+        self.assertIn('rel="canonical" href="https://smallgreen-site.pages.dev/zh-tw/manifesto/"', zh)
+        self.assertIn('hreflang="en" href="https://smallgreen-site.pages.dev/manifesto/"', zh)
         self.assertIn('href="/zh-tw/manifesto/"', en)
         self.assertIn('href="/manifesto/"', zh)
 
@@ -123,7 +123,66 @@ class SiteArchitectureTest(unittest.TestCase):
         self.assertTrue((self.out / "zh-tw" / "services" / "sink" / "index.html").is_file())
         legacy = self.read("s/sink.html")
         self.assertIn('url=/services/sink/', legacy.lower())
-        self.assertIn('rel="canonical" href="https://smallgreen.cooperation.tw/services/sink/"', legacy)
+        self.assertIn('rel="canonical" href="https://smallgreen-site.pages.dev/services/sink/"', legacy)
+
+    def test_first_party_onboarding_pages_are_public_but_separate_from_verified_cards(self):
+        for project_id, name in (("homebox-edge", "HomeBox Edge"), ("kb-vault", "Free Second Brain"), ("meeting-capture-kit", "Meeting Capture Kit")):
+            for prefix in ("", "zh-tw/"):
+                page = self.read(f"{prefix}services/{project_id}/index.html")
+                self.assertIn(name, page)
+                self.assertIn("onboarding", page.lower())
+        services = self.read("services/index.html")
+        self.assertIn("HomeBox Edge", services)
+        self.assertIn("Free Second Brain", services)
+
+    def test_service_cards_explain_the_project_and_show_architecture(self):
+        cards = json.loads(self.read("cards.json"))["cards"]
+        for card in cards:
+            with self.subTest(card=card["id"]):
+                summary = card["product_summary"]
+                for field in ("project_type", "problem", "audience", "capabilities", "limitations", "deployment_requirements"):
+                    self.assertTrue(summary[field]["zh-tw"])
+                    self.assertTrue(summary[field]["en"])
+                for prefix in ("", "zh-tw/"):
+                    page = self.read(f"{prefix}services/{card['id']}/index.html")
+                    self.assertIn("這是什麼專案" if prefix else "What is this project", page)
+                    self.assertIn("解決什麼問題" if prefix else "What problem does it solve", page)
+                    self.assertIn("適合誰" if prefix else "Who it is for", page)
+                    self.assertIn("可以做什麼" if prefix else "What it can do", page)
+                    self.assertIn('class="architecture"', page)
+
+    def test_first_party_onboarding_uses_the_same_product_summary_and_architecture_contract(self):
+        onboarding = json.loads(self.read("cards.json"))["onboarding"]
+        for project in onboarding:
+            with self.subTest(project=project["id"]):
+                summary = project["product_summary"]
+                for field in ("project_type", "problem", "audience", "capabilities", "limitations", "deployment_requirements"):
+                    self.assertTrue(summary[field]["zh-tw"])
+                    self.assertTrue(summary[field]["en"])
+                self.assertTrue(project["architecture"]["cloudflare"])
+                for prefix in ("", "zh-tw/"):
+                    page = self.read(f"{prefix}services/{project['id']}/index.html")
+                    self.assertIn('class="product-summary"', page)
+                    self.assertIn('class="architecture"', page)
+
+    def test_research_cases_are_public_but_separate_from_verified_cards_and_onboarding(self):
+        data = json.loads(self.read("cards.json"))
+        research = data["research_cases"]
+        self.assertEqual(len(research), 31)
+        self.assertIn("cloud-mail", [item["id"] for item in research])
+        self.assertIn("upptime", [item["id"] for item in research])
+        ids = {item["id"] for item in data["cards"] + data["onboarding"]}
+        self.assertTrue(ids.isdisjoint(item["id"] for item in research))
+        for prefix in ("", "zh-tw/"):
+            page = self.read(f"{prefix}services/cloud-mail/index.html")
+            self.assertIn("Not a verified service" if not prefix else "這不是已驗證服務", page)
+            self.assertIn("class=\"research-note\"", page)
+            self.assertIn("class=\"architecture\"", page)
+        services = self.read("services/index.html")
+        self.assertIn("Research-stage candidates", services)
+        self.assertIn("First-party onboarding", services)
+        self.assertIn("13 CATALOGUED", services)
+        self.assertNotIn("13 VERIFIED", services)
 
     def test_shared_assets_are_local_and_present(self):
         self.assertTrue((self.out / "assets" / "site.css").is_file())
@@ -178,9 +237,26 @@ class SiteArchitectureTest(unittest.TestCase):
     def test_machine_outputs_use_new_service_urls_and_list_languages(self):
         cards = json.loads(self.read("cards.json"))
         self.assertEqual(cards["languages"], ["en", "zh-Hant-TW"])
-        self.assertEqual(cards["cards"][0]["url"].split("/services/")[0], "https://smallgreen.cooperation.tw")
+        self.assertIn("positioning", cards)
+        self.assertIn("service directory and standard", cards["positioning"]["en"]["definition"])
+        self.assertIn("服務目錄與標準", cards["positioning"]["zh-Hant-TW"]["definition"])
+        self.assertEqual(cards["cards"][0]["url"].split("/services/")[0], "https://smallgreen-site.pages.dev")
+        self.assertEqual([item["id"] for item in cards["onboarding"]], ["homebox-edge", "kb-vault", "meeting-capture-kit"])
+        self.assertTrue(all(item["url"].startswith("https://smallgreen-site.pages.dev/services/") for item in cards["onboarding"]))
+        self.assertEqual(len(cards["research_cases"]), 31)
+        self.assertTrue(all(item["url"].startswith("https://smallgreen-site.pages.dev/services/") for item in cards["research_cases"]))
         llms = self.read("llms.txt")
         self.assertIn("/services/", llms)
+        self.assertIn("Audience:", llms)
+        self.assertIn("Problem:", llms)
+        self.assertIn("First-party onboarding", llms)
+        self.assertIn("Research cases", llms)
+        llms_full = self.read("llms-full.txt")
+        self.assertIn("## Positioning", llms_full)
+        self.assertIn("First-party onboarding", llms_full)
+        self.assertIn("Meeting Capture Kit", llms_full)
+        self.assertIn("Research cases", llms_full)
+        self.assertIn("Upptime", llms_full)
         sitemap = self.read("sitemap.xml")
         self.assertIn("/zh-tw/", sitemap)
         self.assertIn("hreflang", sitemap)
@@ -225,10 +301,11 @@ class SiteArchitectureTest(unittest.TestCase):
                 self.assertNotRegex(parser.text, forbidden)
 
         home = self.read("zh-tw/index.html")
-        self.assertIn('<span class="hero-title-line">我們正在建立</span>', home)
-        self.assertIn('<span class="hero-title-line">小型軟體的所有權與部署層</span>', home)
-        self.assertIn('<span class="title-line">依證據選擇</span>', home)
-        self.assertIn('<span class="title-line">不依承諾選擇</span>', home)
+        self.assertIn('<span class="hero-title-line">從開源小型專案</span>', home)
+        self.assertIn('<span class="hero-title-line">找到自己能運行的服務</span>', home)
+        self.assertNotIn("中小企業", home)
+        self.assertIn('<span class="title-line">先看專案本身</span>', home)
+        self.assertIn('<span class="title-line">再看部署方式</span>', home)
 
     def test_all_heading_levels_omit_prose_punctuation(self):
         forbidden = re.compile(r"[。，；：！？.!?,;:]")
@@ -250,14 +327,109 @@ class SiteArchitectureTest(unittest.TestCase):
                     self.assertNotIn(line[-1], forbidden_edges)
 
     def test_concept_pages_include_complete_aeo_structure(self):
+        index = self.read("concepts/index.html")
+        for marker in ("concept-path", "concept-stage", "Is the purpose and scope bounded", "Can you maintain move or remove the service and its data", "Pass condition", "Check"):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, index)
+        manifesto = self.read("manifesto/index.html")
+        for marker in ("manifesto-purpose-grid", "principles-list", "Own the running service", "Our publication rule"):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, manifesto)
+        self.assertNotIn('<p class="kicker">Mission</p><h3>Mission</h3>', manifesto)
         page = self.read("concepts/small-software/index.html")
         for heading in (
-            "Direct answer", "Why it matters", "Scope", "Out of scope",
+            "Why it matters", "Scope", "Out of scope",
             "How it works", "Example", "Machine-readable references",
             "Evidence and limitations", "Related concepts", "Version",
         ):
             with self.subTest(heading=heading):
                 self.assertIn(f">{heading}<", page)
+
+    def test_homepage_stays_at_the_catalogue_level(self):
+        for relative in ("index.html", "zh-tw/index.html"):
+            home = self.read(relative)
+            with self.subTest(relative=relative):
+                self.assertIn("service-index", home)
+                self.assertIn("home-trust", home)
+                self.assertNotIn("onboarding-section", home)
+                self.assertNotIn("research-section", home)
+                self.assertNotIn("05 /", home)
+                self.assertNotIn("06 /", home)
+
+    def test_homepage_states_the_new_positioning_before_technical_terms(self):
+        for relative in ("index.html", "zh-tw/index.html"):
+            home = self.read(relative)
+            with self.subTest(relative=relative):
+                self.assertIn('class="hero-definition"', home)
+                self.assertIn("SmallGreen", home)
+                self.assertIn("service directory" if relative == "index.html" else "服務目錄與標準", home)
+                self.assertNotIn("Deployment Contract", home)
+
+    def test_zh_faq_answers_preserve_sentence_boundaries_and_meaning(self):
+        faq = self.read("zh-tw/faq/index.html")
+        self.assertIn(
+            "不會代管</span><span class=\"faq-line\">服務會運行在你自己的帳號</span>"
+            "<span class=\"faq-line\">SmallGreen 會公開部署契約、Adapter 與驗證證據",
+            faq,
+        )
+        self.assertNotIn("不會服務運行", faq)
+        self.assertNotIn("SmallGreen 公開契約、Adapter", faq)
+        self.assertIn("\"text\": \"不會代管 服務會運行在你自己的帳號 SmallGreen 會公開部署契約、Adapter 與驗證證據\"", faq)
+
+    def test_zh_display_cleanup_does_not_merge_sentences(self):
+        from build import clean_zh_display_copy
+
+        self.assertIn("第一句　第二句", clean_zh_display_copy("第一句。第二句"))
+
+    def test_public_about_label_uses_plain_language(self):
+        en = self.read("manifesto/index.html")
+        zh = self.read("zh-tw/manifesto/index.html")
+        self.assertIn(">About<", en)
+        self.assertIn("ABOUT SMALLGREEN", en)
+        self.assertNotIn(">Manifesto<", en)
+        self.assertIn("關於 SmallGreen", zh)
+        self.assertNotIn(">宣言<", zh)
+
+    def test_concept_copy_uses_ownership_language_correctly(self):
+        page = self.read("zh-tw/concepts/ownership-and-deployment-layer/index.html")
+        self.assertIn("所有權僅限於使用者帳號內的部署與資料", page)
+        self.assertNotIn("所有權限於使用者帳號內", page)
+
+    def test_zh_public_copy_uses_project_terms_and_not_legacy_labels(self):
+        for path in self.out.glob("zh-tw/**/index.html"):
+            html = path.read_text(encoding="utf-8")
+            visible = VisibleTextCollector()
+            visible.feed(html)
+            with self.subTest(path=path):
+                self.assertNotIn("宣言", visible.text)
+                self.assertNotIn("Manifesto", visible.text)
+                self.assertNotIn("運營", visible.text)
+                self.assertNotIn("所有權限於", visible.text)
+
+    def test_service_index_leads_with_project_purpose_and_audience(self):
+        for relative in ("services/index.html", "zh-tw/services/index.html"):
+            page = self.read(relative)
+            with self.subTest(relative=relative):
+                self.assertIn("service-audience", page)
+                self.assertIn("Find a project you can run yourself" if relative == "services/index.html" else "找一個自己能運行的開源小型專案", page)
+                self.assertIn("Catalogued" if relative == "services/index.html" else "已收錄", page)
+
+    def test_service_detail_separates_decision_information_from_operations(self):
+        for relative in ("services/sink/index.html", "zh-tw/services/sink/index.html"):
+            page = self.read(relative)
+            with self.subTest(relative=relative):
+                self.assertIn("DECIDE FIRST" if relative == "services/sink/index.html" else "部署前先判斷", page)
+                self.assertIn("Before you deploy" if relative == "services/sink/index.html" else "部署前要準備什麼", page)
+                self.assertIn("How it runs" if relative == "services/sink/index.html" else "怎麼運行", page)
+                self.assertIn("Where it runs and what it touches" if relative == "services/sink/index.html" else "在哪裡運行、會碰到什麼資料", page)
+
+    def test_research_architecture_declares_its_actual_source(self):
+        for prefix in ("", "zh-tw/"):
+            page = self.read(f"{prefix}services/cloud-mail/index.html")
+            with self.subTest(prefix=prefix):
+                self.assertIn("research-stage" if not prefix else "研究階段架構", page.lower())
+                self.assertIn("metadata", page.lower())
+                self.assertNotIn("依部署契約機械生成", page)
 
     def test_evidence_index_and_service_pages_publish_sanitized_screenshots(self):
         evidence = self.read("evidence/index.html")

@@ -1,20 +1,39 @@
-# SmallGreen Cloud 目錄站
+# SmallGreen 服務目錄
 
-> 經驗證的 Cloudflare 免費層小型開源服務目錄。**registry 服務卡 YAML＝真相源，本站只 render 不另存資料。**
+> **SmallGreen 是一套把開源小型專案整理成可自己部署、自己掌握、自己運行的服務目錄與標準。**
+
+本站面向想把開源小型專案變成自己能運行服務的人。Registry 服務卡 YAML 是事實真相源，本站只 render，不另存服務資料。
 
 [![site](https://github.com/smallgreen-cloud/site/actions/workflows/site.yml/badge.svg)](https://github.com/smallgreen-cloud/site/actions/workflows/site.yml)
 
-- 正式站：https://smallgreen.cooperation.tw
-- Cloudflare 備援：https://smallgreen-site-9pi.pages.dev
-- 資料來源：[registry](https://github.com/smallgreen-cloud/registry)（cards/＋taxonomy.yaml）
+- 目前入口：https://smallgreen-site.pages.dev
+- 自訂網域：`smallgreen.cooperation.tw`（後續處理）
+- 資料來源：[registry](https://github.com/smallgreen-cloud/registry)（cards/、onboarding/＋candidates/research-cases.yaml）
 - 標準：[spec](https://github.com/smallgreen-cloud/spec) v0.2.1
 - 網站規範：[DESIGN_AND_CONTENT_POLICY.md](DESIGN_AND_CONTENT_POLICY.md)（設計系統、雙語、SEO／AEO、公開內容邊界）
 - 實作路線圖：[IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md)（雙語資料、Evidence、聚合分析、CI 與部署）
 
-## 正式環境狀態（2026-08-04）
+## 網站如何呈現專案
 
-- `main` 經 GitHub Actions 自動部署至既有 Cloudflare Pages 專案 `smallgreen-site`
-- 正式網域與 Pages 備援均通過 HTTP 200、canonical、雙語路由、安全標頭、404、機器介面與 Web Analytics beacon 驗證
+每個專案先用人能理解的方式回答：這是什麼專案、解決什麼問題、適合誰、可以做什麼、部署前要準備什麼、開始前要知道哪些限制。接著再揭露架構、資料流、驗證證據、維護與退出方式。
+
+## 服務卡的三個層級
+
+- `Catalogued services`：已有 Registry 服務卡，依 Discovered、Community Verified、SmallGreen Ready 顯示目前證據層級。
+- `First-party onboarding`：SmallGreen 自有專案先公開用途、適合對象、目前能力與上架待辦，但不冒充已驗證服務。
+- `Research cases`：候選專案依上游 README 與 metadata 整理用途、架構與待辦，但不冒充服務卡或部署證據。
+
+目前 onboarding 清單包含 HomeBox Edge、Free Second Brain（kb-vault）與 Meeting Capture Kit。研究案例則獨立放在 `cards.json` 的 `research_cases` 區塊；完成契約、真實部署驗收與 Evidence Pack 後，才轉入 `cards`。
+
+首頁只展示少量已收錄服務，讓第一次造訪的人先理解 SmallGreen 與服務卡。完整服務、上架準備與研究案例集中在服務目錄，三個層級不混在一起。
+
+目前先以 `https://smallgreen-site.pages.dev` 作為新版入口。Registry 更新後可由 `registry-updated` 事件或 Site workflow 的 `workflow_dispatch` 重建與部署；自訂網域待內容與案例穩定後再切換。
+
+## 目前環境狀態（2026-08-27）
+
+- 新版內容直接部署至既有 Cloudflare Pages 專案 `smallgreen-site`
+- 目前入口以 Pages URL 產生 canonical、雙語路由、安全標頭、機器介面與研究案例詳頁
+- 目前 render 13 張 verified service cards、3 個 first-party onboarding 與 31 個 research cases
 - Google Search Console Domain property 已驗證；Sitemap 讀取成功並探索 52 個網頁
 - Bing Webmaster 網站所有權已驗證；Sitemap 讀取成功並探索 52 個 URL
 - Cloudflare AI Crawl Control 採監測模式；Search／Agent Access 與 Model Training 由版本化 `robots.txt` 分開治理

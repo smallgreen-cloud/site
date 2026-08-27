@@ -17,7 +17,12 @@ DASH = "#7d9a8b"
 INK = "#1c2b22"
 FONT = "ui-sans-serif,system-ui,'Noto Sans TC',sans-serif"
 
-COMPUTE_LABEL = {"workers": "Worker", "pages": "Pages"}
+COMPUTE_LABEL = {
+    "workers": "Worker",
+    "pages": "Pages",
+    "github-actions": "GitHub Actions",
+    "github-pages": "GitHub Pages",
+}
 # id → (完整標籤, 短標籤)
 DATA_LABEL = {
     "d1": ("D1 資料庫", "D1"),
@@ -29,25 +34,46 @@ DATA_LABEL = {
     "cron": ("Cron 排程", "Cron"),
     "vectorize": ("Vectorize", "Vec"),
     "durable-objects": ("Durable Objects", "DO"),
+    "email-routing": ("Email Routing", "Mail"),
+    "images": ("Images", "Img"),
+    "repository": ("Git repository", "Repo"),
+    "github-issues": ("GitHub Issues", "Issues"),
+    "github-discussions": ("GitHub Discussions", "Discuss"),
+    "github-api": ("GitHub API", "API"),
+    "workflow-artifacts": ("Workflow artifacts", "Artifacts"),
+    "rss": ("RSS sources", "RSS"),
 }
 EXT_PLACEHOLDER = {"(user-directed)": "使用者指定端點", "(user-configured)": "使用者設定端點"}
 EXT_MAXLEN = 30
 
 
 def _split_components(card: dict) -> tuple[list[tuple[str, str]], list[tuple[str, str, str]]]:
-    """components.cloudflare → (計算節點 [(id, label)], 資料層 [(id, 全標籤, 短標籤)])。"""
+    """Cloudflare／GitHub components → compute and data nodes."""
     compute: list[tuple[str, str]] = []
     data: list[tuple[str, str, str]] = []
-    for raw in card.get("components", {}).get("cloudflare", []):
-        base = str(raw).strip().replace("（選配）", "(選配)")
-        opt = base.endswith("(選配)")
-        cid = base[: -len("(選配)")].strip() if opt else base
-        suffix = "（選配）" if opt else ""
-        if cid in COMPUTE_LABEL:
-            compute.append((cid, COMPUTE_LABEL[cid] + suffix))
-        else:
-            full, short = DATA_LABEL.get(cid, (cid, cid[:6]))
-            data.append((cid, full + suffix, short))
+    github_aliases = {
+        "actions": "github-actions", "github-actions": "github-actions",
+        "pages": "github-pages", "github-pages": "github-pages",
+        "repo": "repository", "repository": "repository",
+        "issues": "github-issues", "github-issues": "github-issues",
+        "discussions": "github-discussions", "github-discussions": "github-discussions",
+        "api": "github-api", "github-api": "github-api",
+        "artifacts": "workflow-artifacts", "workflow-artifacts": "workflow-artifacts",
+        "rss": "rss", "rss-sources": "rss",
+    }
+    for platform in ("cloudflare", "github"):
+        for raw in card.get("components", {}).get(platform, []) or []:
+            base = str(raw).strip().replace("（選配）", "(選配)")
+            opt = base.endswith("(選配)")
+            cid = base[: -len("(選配)")].strip() if opt else base
+            if platform == "github":
+                cid = github_aliases.get(cid.lower(), cid.lower())
+            suffix = "（選配）" if opt else ""
+            if cid in COMPUTE_LABEL:
+                compute.append((cid, COMPUTE_LABEL[cid] + suffix))
+            else:
+                full, short = DATA_LABEL.get(cid, (cid, cid[:6]))
+                data.append((cid, full + suffix, short))
     return compute, data
 
 
@@ -82,7 +108,15 @@ def _markers(mid: str) -> str:
             f'orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="{DASH}"/></marker></defs>')
 
 
-def _svg_full(card: dict) -> str:
+def _provenance_label(provenance: str) -> str:
+    return {
+        "contract": "依部署契約機械生成",
+        "onboarding": "依上架準備資料生成",
+        "research": "依研究階段架構 metadata 生成",
+    }.get(provenance, "依宣告架構資料生成")
+
+
+def _svg_full(card: dict, provenance: str = "contract") -> str:
     compute, data = _split_components(card)
     if not compute:
         compute = [("app", "服務")]
@@ -103,7 +137,7 @@ def _svg_full(card: dict) -> str:
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w_total} {height:g}" role="img" '
         f'font-family="{FONT}" aria-label="{escape(card["name"])} 架構與資料流圖">',
-        f'<title>{escape(card["name"])} 架構與資料流（依部署契約機械生成）</title>',
+        f'<title>{escape(card["name"])} 架構與資料流（{escape(_provenance_label(provenance))}）</title>',
         _markers(mid),
         _box(ux, yc - uh / 2, uw, uh, GREEN, GREEN, "使用者", 14, "#ffffff"),
     ]
@@ -132,7 +166,7 @@ def _svg_full(card: dict) -> str:
     return "".join(parts)
 
 
-def _svg_compact(card: dict) -> str:
+def _svg_compact(card: dict, provenance: str = "contract") -> str:
     compute, data = _split_components(card)
     if not compute:
         compute = [("app", "服務")]
@@ -149,7 +183,7 @@ def _svg_compact(card: dict) -> str:
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w_total} {height:g}" role="img" '
         f'font-family="{FONT}" aria-label="{escape(card["name"])} 元件圖">',
-        f'<title>{escape(card["name"])} 元件圖（依部署契約機械生成）</title>',
+        f'<title>{escape(card["name"])} 元件圖（{escape(_provenance_label(provenance))}）</title>',
         _markers(mid),
         _box(ux, yc - uh / 2, uw, uh, GREEN, GREEN, "使用者", 11, "#ffffff"),
     ]
@@ -168,6 +202,6 @@ def _svg_compact(card: dict) -> str:
     return "".join(parts)
 
 
-def arch_svg(card: dict, compact: bool = False) -> str:
-    """服務卡 → 內嵌用 SVG 字串。compact=True 為卡片牆小版（省外連與文字細節）。"""
-    return _svg_compact(card) if compact else _svg_full(card)
+def arch_svg(card: dict, compact: bool = False, provenance: str = "contract") -> str:
+    """服務卡 → 內嵌用 SVG 字串。provenance 標示架構資料的來源。"""
+    return (_svg_compact(card, provenance) if compact else _svg_full(card, provenance))

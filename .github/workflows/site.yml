@@ -8,6 +8,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
   repository_dispatch:
     types: [registry-updated]
 
@@ -64,13 +65,15 @@ jobs:
           html = Path("dist/index.html").read_text()
           cards = json.loads(Path("dist/cards.json").read_text())
           assert len(cards["cards"]) == n_cards
+          n_onboarding = len(cards["onboarding"])
+          n_research = len(cards["research_cases"])
           assert cards["languages"] == ["en", "zh-Hant-TW"]
-          assert len(list(Path("dist/services").glob("*/index.html"))) == n_cards
-          assert len(list(Path("dist/zh-tw/services").glob("*/index.html"))) == n_cards
+          assert len(list(Path("dist/services").glob("*/index.html"))) == n_cards + n_onboarding + n_research
+          assert len(list(Path("dist/zh-tw/services").glob("*/index.html"))) == n_cards + n_onboarding + n_research
           assert Path("dist/manifesto/index.html").is_file()
           assert Path("dist/zh-tw/manifesto/index.html").is_file()
           assert "SmallGreen" in html
-          print(f"ok: {n_cards} services × 2 languages")
+          print(f"ok: {n_cards} verified services + {n_onboarding} onboarding + {n_research} research cases × 2 languages")
           EOF
       - name: Browser QA（RWD／console／WCAG serious＋critical）
         run: |
