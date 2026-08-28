@@ -35,6 +35,7 @@ DATA_LABEL = {
     "vectorize": ("Vectorize", "Vec"),
     "durable-objects": ("Durable Objects", "DO"),
     "email-routing": ("Email Routing", "Mail"),
+    "email-service": ("Email Service 寄信", "Mail"),
     "images": ("Images", "Img"),
     "repository": ("Git repository", "Repo"),
     "github-issues": ("GitHub Issues", "Issues"),
