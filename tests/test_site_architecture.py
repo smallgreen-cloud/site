@@ -181,8 +181,8 @@ class SiteArchitectureTest(unittest.TestCase):
         services = self.read("services/index.html")
         self.assertIn("Research-stage candidates", services)
         self.assertIn("First-party onboarding", services)
-        self.assertIn("13 CATALOGUED", services)
-        self.assertNotIn("13 VERIFIED", services)
+        self.assertIn("14 CATALOGUED", services)
+        self.assertNotIn("14 VERIFIED", services)
 
     def test_shared_assets_are_local_and_present(self):
         self.assertTrue((self.out / "assets" / "site.css").is_file())

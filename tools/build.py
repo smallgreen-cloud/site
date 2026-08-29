@@ -982,7 +982,7 @@ def build(registry: Path, out: Path, base_url: str = DEFAULT_BASE_URL) -> None:
     write_legacy_redirects(cards, out, base_url)
     write_cloudflare_outputs(cards, out)
     write_machine_outputs(cards, out, base_url, canonical_routes, onboarding, research_cases)
-    print(f"built bilingual site: {len(cards)} verified services + {len(onboarding)} onboarding + {len(research_cases)} research cases, {len(CONCEPTS)} concepts, {len(list(out.rglob('*.html')))} HTML pages")
+    print(f"built bilingual site: {len(cards)} catalogued services + {len(onboarding)} onboarding + {len(research_cases)} research cases, {len(CONCEPTS)} concepts, {len(list(out.rglob('*.html')))} HTML pages")
 
 
 if __name__ == "__main__":

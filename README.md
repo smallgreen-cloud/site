@@ -23,7 +23,7 @@
 - `First-party onboarding`：SmallGreen 自有專案先公開用途、適合對象、目前能力與上架待辦，但不冒充已驗證服務。
 - `Research cases`：候選專案依上游 README 與 metadata 整理用途、架構與待辦，但不冒充服務卡或部署證據。
 
-目前 onboarding 清單包含 HomeBox Edge、Free Second Brain（kb-vault）與 Meeting Capture Kit。研究案例則獨立放在 `cards.json` 的 `research_cases` 區塊；完成契約、真實部署驗收與 Evidence Pack 後，才轉入 `cards`。
+目前 onboarding 清單包含 HomeBox Edge、Free Second Brain（kb-vault）與 Meeting Capture Kit。FluxGate 已有隔離 Evidence Pack，現以 `discovered` 狀態進入 `cards`；研究案例則獨立放在 `cards.json` 的 `research_cases` 區塊；完成契約、真實部署驗收與 Evidence Pack 後，才轉入 `cards`。
 
 首頁只展示少量已收錄服務，讓第一次造訪的人先理解 SmallGreen 與服務卡。完整服務、上架準備與研究案例集中在服務目錄，三個層級不混在一起。
 
