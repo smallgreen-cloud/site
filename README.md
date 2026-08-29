@@ -29,11 +29,11 @@
 
 目前先以 `https://smallgreen-site.pages.dev` 作為新版入口。Registry 更新後可由 `registry-updated` 事件或 Site workflow 的 `workflow_dispatch` 重建與部署；自訂網域待內容與案例穩定後再切換。
 
-## 目前環境狀態（2026-08-27）
+## 目前環境狀態（2026-08-28）
 
 - 新版內容直接部署至既有 Cloudflare Pages 專案 `smallgreen-site`
 - 目前入口以 Pages URL 產生 canonical、雙語路由、安全標頭、機器介面與研究案例詳頁
-- 目前 render 13 張 verified service cards、3 個 first-party onboarding 與 31 個 research cases
+- 目前 render 14 張 catalogued service cards、3 個 first-party onboarding 與 32 個 research cases
 - Google Search Console Domain property 已驗證；Sitemap 讀取成功並探索 52 個網頁
 - Bing Webmaster 網站所有權已驗證；Sitemap 讀取成功並探索 52 個 URL
 - Cloudflare AI Crawl Control 採監測模式；Search／Agent Access 與 Model Training 由版本化 `robots.txt` 分開治理

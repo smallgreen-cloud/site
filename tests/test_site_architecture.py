@@ -168,9 +168,10 @@ class SiteArchitectureTest(unittest.TestCase):
     def test_research_cases_are_public_but_separate_from_verified_cards_and_onboarding(self):
         data = json.loads(self.read("cards.json"))
         research = data["research_cases"]
-        self.assertEqual(len(research), 31)
+        self.assertEqual(len(research), 32)
         self.assertIn("cloud-mail", [item["id"] for item in research])
         self.assertIn("upptime", [item["id"] for item in research])
+        self.assertIn("foreclosure-map", [item["id"] for item in research])
         ids = {item["id"] for item in data["cards"] + data["onboarding"]}
         self.assertTrue(ids.isdisjoint(item["id"] for item in research))
         for prefix in ("", "zh-tw/"):
@@ -243,7 +244,7 @@ class SiteArchitectureTest(unittest.TestCase):
         self.assertEqual(cards["cards"][0]["url"].split("/services/")[0], "https://smallgreen-site.pages.dev")
         self.assertEqual([item["id"] for item in cards["onboarding"]], ["homebox-edge", "kb-vault", "meeting-capture-kit"])
         self.assertTrue(all(item["url"].startswith("https://smallgreen-site.pages.dev/services/") for item in cards["onboarding"]))
-        self.assertEqual(len(cards["research_cases"]), 31)
+        self.assertEqual(len(cards["research_cases"]), 32)
         self.assertTrue(all(item["url"].startswith("https://smallgreen-site.pages.dev/services/") for item in cards["research_cases"]))
         llms = self.read("llms.txt")
         self.assertIn("/services/", llms)
@@ -468,6 +469,13 @@ class SiteArchitectureTest(unittest.TestCase):
         workflow = (ROOT / ".github" / "workflows" / "site.yml").read_text(encoding="utf-8")
         self.assertNotIn("process.env.QA_BASE_URL", qa_script)
         self.assertIn("npm run qa:browser -- http://127.0.0.1:8765", workflow)
+
+    def test_public_artifact_scan_allows_commit_shas_but_rejects_generic_tokens(self):
+        workflow = (ROOT / ".github" / "workflows" / "site.yml").read_text(encoding="utf-8")
+        self.assertIn(r"(?![0-9a-fA-F]{40}\b)", workflow)
+        token_pattern = re.compile(r"\b(?![0-9a-fA-F]{40}\b)[A-Za-z0-9_-]{40}\b")
+        self.assertIsNone(token_pattern.search("b7345422e2f63e815c4a8e27fefdbcf27e5d81d6"))
+        self.assertIsNotNone(token_pattern.search("Z" * 40))
 
     def test_cloudflare_deploy_runs_only_after_main_ci_with_repository_secrets(self):
         workflow = (ROOT / ".github" / "workflows" / "site.yml").read_text(encoding="utf-8")
