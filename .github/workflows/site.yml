@@ -24,7 +24,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: smallgreen-cloud/spec
-          ref: v0.4.0
+          # v0.4.0 schema commit; the release tag is not yet present on spec main.
+          ref: e61861aeb6a82b473b6d52aa449ceff130b33cb0
           path: .spec
       - uses: actions/setup-python@v5
         with:
