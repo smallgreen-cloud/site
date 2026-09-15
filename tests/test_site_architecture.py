@@ -168,10 +168,11 @@ class SiteArchitectureTest(unittest.TestCase):
     def test_research_cases_are_public_but_separate_from_verified_cards_and_onboarding(self):
         data = json.loads(self.read("cards.json"))
         research = data["research_cases"]
-        self.assertEqual(len(research), 32)
+        self.assertEqual(len(research), 33)
         self.assertIn("cloud-mail", [item["id"] for item in research])
         self.assertIn("upptime", [item["id"] for item in research])
         self.assertIn("foreclosure-map", [item["id"] for item in research])
+        self.assertIn("audio-notes-sites", [item["id"] for item in research])
         ids = {item["id"] for item in data["cards"] + data["onboarding"]}
         self.assertTrue(ids.isdisjoint(item["id"] for item in research))
         for prefix in ("", "zh-tw/"):
@@ -244,7 +245,7 @@ class SiteArchitectureTest(unittest.TestCase):
         self.assertEqual(cards["cards"][0]["url"].split("/services/")[0], "https://smallgreen-site.pages.dev")
         self.assertEqual([item["id"] for item in cards["onboarding"]], ["homebox-edge", "kb-vault", "meeting-capture-kit"])
         self.assertTrue(all(item["url"].startswith("https://smallgreen-site.pages.dev/services/") for item in cards["onboarding"]))
-        self.assertEqual(len(cards["research_cases"]), 32)
+        self.assertEqual(len(cards["research_cases"]), 33)
         self.assertTrue(all(item["url"].startswith("https://smallgreen-site.pages.dev/services/") for item in cards["research_cases"]))
         llms = self.read("llms.txt")
         self.assertIn("/services/", llms)
