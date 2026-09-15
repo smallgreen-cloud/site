@@ -7,14 +7,31 @@ one-liners. A missing translation is a build error rather than a silent fallback
 
 LANGS = ("en", "zh-tw")
 
+BRAND = "SmallGreen"
+
+POSITIONING = {
+    "en": {
+        "definition": "SmallGreen is a service directory and standard for turning open-source small projects into services you can deploy, control and run yourself.",
+        "audience": "People who want to turn an open-source small project into a service they can run themselves.",
+        "problem": "A repository can be useful without being understandable, deployable or maintainable as a service.",
+        "promise": "See what a project does, who it is for, what it needs, what has been checked and how to leave before you run it.",
+    },
+    "zh-tw": {
+        "definition": "SmallGreen 是一套把開源小型專案整理成可自己部署、自己掌握、自己運行的服務目錄與標準。",
+        "audience": "想把開源小型專案變成自己能運行的服務的人",
+        "problem": "一個 Repo 可以被下載，不代表它已經容易看懂、部署、維護與退出。",
+        "promise": "在開始運行前，先看懂專案要解決什麼、適合誰、需要什麼、檢查過什麼，以及如何離開。",
+    },
+}
+
 NAV = {
     "en": {
-        "manifesto": "Manifesto", "concepts": "Concepts", "services": "Services",
+        "manifesto": "About", "concepts": "Concepts", "services": "Services",
         "standard": "Standard", "evidence": "Evidence", "faq": "FAQ",
         "language": "繁體中文",
     },
     "zh-tw": {
-        "manifesto": "宣言", "concepts": "核心概念", "services": "服務目錄",
+        "manifesto": "關於 SmallGreen", "concepts": "核心概念", "services": "服務目錄",
         "standard": "標準", "evidence": "驗證證據", "faq": "常見問題",
         "language": "English",
     },
@@ -22,84 +39,81 @@ NAV = {
 
 HOME = {
     "en": {
-        "eyebrow": "01 / OWNERSHIP, NOT ANOTHER PLATFORM",
-        "title": "The ownership and deployment layer for Small Software",
-        "lede": "Community-verified, serverless-first, resource-budgeted software you can run in your own account.",
-        "primary": "Explore verified services",
-        "secondary": "Read the standard",
-        "how_label": "02 / THE TRUST PATH",
-        "how_title_lines": ["Humans read Service Cards", "Agents read Deployment Contracts"],
-        "services_label": "03 / VERIFIED SERVICE INDEX",
-        "services_title": "Choose by evidence not by promise",
-        "services_title_lines": ["Choose by evidence", "Not by promise"],
-        "services_text": "Every listing exposes its resource budget, data flow, verification date and known limits.",
-        "trust_label": "04 / PUBLIC BY DESIGN",
-        "trust_title": "The standard is open Your deployment stays yours",
-        "trust_title_lines": ["The standard is open", "Your deployment stays yours"],
-        "trust_text": "We publish schemas, service cards and sanitized evidence. We do not collect deployment telemetry or user data.",
+        "eyebrow": "01 / SMALLGREEN / SERVICE DIRECTORY + STANDARD",
+        "title": "Find a small project you can run yourself",
+        "title_lines": ["Find a small project", "you can run yourself"],
+        "definition_label": "WHAT SMALLGREEN IS",
+        "definition": POSITIONING["en"]["definition"],
+        "lede": POSITIONING["en"]["promise"],
+        "meta_description": POSITIONING["en"]["definition"],
+        "primary": "Find a project",
+        "secondary": "See the six questions",
+        "secondary_path": "concepts",
+        "how_label": "02 / BEFORE YOU RUN IT",
+        "how_title_lines": ["Decide from the project", "not the stack"],
+        "how_text": "A useful decision starts with three plain questions.",
+        "trust_items": [
+            ("What does it solve", "Start with the project purpose, audience and boundaries."),
+            ("What does it need", "See data flow, resources, external services and limits."),
+            ("Can you keep control", "Check evidence, maintenance and the path to remove it."),
+        ],
+        "services_label": "03 / OPEN-SOURCE PROJECTS",
+        "services_title_lines": ["Choose by the problem", "then inspect the deployment"],
+        "services_text": "Each entry starts with what the project does and who it is for. Open the Service Card for architecture, requirements, limits and evidence.",
     },
     "zh-tw": {
-        "eyebrow": "01 / 擁有，而不是再多一個平台",
-        "title": "我們正在建立小型軟體的所有權與部署層",
-        "title_lines": ["我們正在建立", "小型軟體的所有權與部署層"],
-        "lede": "經社群驗證、Serverless 優先、受資源預算約束，部署在你自己的帳號。",
-        "primary": "探索已驗證服務",
-        "secondary": "閱讀標準",
-        "how_label": "02 / 信任路徑",
-        "how_title_lines": ["人看服務卡", "Agent 看部署契約"],
-        "services_label": "03 / 驗證服務索引",
-        "services_title": "依證據選擇 不依承諾選擇",
-        "services_title_lines": ["依證據選擇", "不依承諾選擇"],
-        "services_text": "每個條目公開資源預算、資料流、驗證日期與已知限制。",
-        "trust_label": "04 / 公開是設計，不是附加功能",
-        "trust_title": "標準保持開放 部署仍由你擁有",
-        "trust_title_lines": ["標準保持開放", "部署仍由你擁有"],
-        "trust_text": "公開 Schema、服務卡與經清理的證據；不收集部署遙測或使用者資料。",
+        "eyebrow": "01 / SMALLGREEN / 服務目錄與標準",
+        "title": "找一個自己能運行的開源小型專案",
+        "title_lines": ["從開源小型專案", "找到自己能運行的服務"],
+        "definition_label": "SMALLGREEN 是什麼",
+        "definition": POSITIONING["zh-tw"]["definition"],
+        "lede": POSITIONING["zh-tw"]["promise"],
+        "meta_description": POSITIONING["zh-tw"]["definition"],
+        "primary": "找一個專案",
+        "secondary": "看六個判斷問題",
+        "secondary_path": "concepts",
+        "how_label": "02 / 開始運行之前",
+        "how_title_lines": ["先看專案本身", "再看部署方式"],
+        "how_text": "一個有用的判斷　先回答三個問題。",
+        "trust_items": [
+            ("它要解決什麼", "先看專案用途、適合對象與使用邊界。"),
+            ("它需要什麼", "看清楚資料流、資源、外部服務與限制。"),
+            ("能不能自己掌握", "確認證據、維護方式與移除服務的路徑。"),
+        ],
+        "services_label": "03 / 開源小型專案",
+        "services_title_lines": ["先按要解決的問題找", "再確認部署方式"],
+        "services_text": "每個條目先說明專案要做什麼與適合誰　開啟服務卡查看架構、部署前提、限制與證據。",
     },
 }
 
 STATIC_PAGES = {
     "manifesto": {
         "en": {
-            "label": "MANIFESTO", "title": "Small Software should be owned not rented",
-            "title_lines": ["Small Software should be owned", "Not rented"],
-            "lede": "AI made software easier to create. It did not make deployment, trust or maintenance disappear.",
-            "sections": [
-                ("The gap", "Small tools are repeatedly rebuilt, then abandoned when operating them becomes the hard part. SmallGreen Cloud turns deployment and maintenance into an explicit, testable contract."),
-                ("The position", "Free tier is a resource budget, not a discount strategy. Serverless-first means idle infrastructure can disappear, while the user keeps control of code, data and exit."),
-                ("The promise", "No phone-home telemetry. No verification by assertion. Every public claim points to a versioned contract and evidence."),
-            ],
+            "label": "ABOUT SMALLGREEN",
         },
         "zh-tw": {
-            "label": "宣言", "title": "小型軟體應該被擁有 不該被租用",
-            "title_lines": ["小型軟體應該被擁有", "不該被租用"],
-            "lede": "AI 降低了開發門檻，卻沒有讓部署、信任與維護自動消失。",
-            "sections": [
-                ("斷層", "小工具被反覆重造，又在真正需要運營時遭到放棄。SmallGreen Cloud 把部署與維護轉成明確、可測試的契約。"),
-                ("立場", "免費額度是一項資源預算，不是低價策略。Serverless 優先讓閒置基礎設施歸零，同時讓使用者保有程式碼、資料與退場權。"),
-                ("承諾", "不放入 phone-home 遙測，不靠自我宣告完成驗證。每一項公開主張都連回版本化契約與證據。"),
-            ],
+            "label": "關於 SmallGreen",
         },
     },
     "standard": {
         "en": {
-            "label": "STANDARD", "title": "Contract gate and human judgment form a feedback loop",
-            "title_lines": ["Contract gate and human judgment", "Form a feedback loop"],
-            "lede": "SmallGreen Spec defines what can be checked before deployment, during acceptance and at teardown.",
+            "label": "STANDARD", "title": "How a project becomes deployable and ownable",
+            "title_lines": ["How a project becomes", "deployable and ownable"],
+            "lede": "The SmallGreen standard turns project facts into checks for deployment, acceptance, maintenance and exit.",
             "sections": [
-                ("Profiles", "Small App and Pipeline profiles define eligible resource and execution patterns."),
-                ("Deployment contracts", "Profile, acceptance and maintenance contracts turn repository facts into machine-readable instructions."),
-                ("Conformance", "Validators and Evidence Packs decide pass or fail. The Agent guides the process but is never the judge."),
+                ("Project profile", "Small App and Pipeline profiles describe the service shape, resources and execution pattern."),
+                ("Deployment contract", "Profile, acceptance and maintenance contracts turn repository facts into machine-readable instructions."),
+                ("Independent checks", "Validators and Evidence Packs decide pass or fail. An Agent can guide the process but is never the judge."),
             ],
         },
         "zh-tw": {
-            "label": "標準", "title": "契約 閘門 人形成回饋迴圈",
-            "title_lines": ["契約 閘門 人", "形成回饋迴圈"],
-            "lede": "SmallGreen Spec 定義部署前、驗收中與移除後可以被機械檢查的條件。",
+            "label": "標準", "title": "專案如何變成自己能運行的服務",
+            "title_lines": ["專案如何變成", "自己能運行的服務"],
+            "lede": "SmallGreen 標準把專案事實轉成部署、驗收、維護與退出時可以檢查的條件。",
             "sections": [
-                ("Profile", "Small App 與 Pipeline Profile 定義可接受的資源與執行模式。"),
+                ("專案 Profile", "Small App 與 Pipeline Profile 說明服務形狀、資源與執行方式。"),
                 ("部署契約", "Profile、acceptance、maintenance 三份契約把 Repo 事實轉成機器可讀的指令。"),
-                ("Conformance", "Validator 與 Evidence Pack 決定通過或失敗。Agent 引導流程，但永遠不是裁判。"),
+                ("獨立檢查", "Validator 與 Evidence Pack 決定通過或失敗。Agent 可以引導流程，但永遠不是裁判。"),
             ],
         },
     },
@@ -107,7 +121,7 @@ STATIC_PAGES = {
         "en": {
             "label": "EVIDENCE", "title": "Verification is a public trail not a badge",
             "title_lines": ["Verification is a public trail", "Not a badge"],
-            "lede": "A result is only as useful as its commit, environment, acceptance checks and teardown record.",
+            "lede": "Evidence shows what was checked, for which version and when. It is a public trail, not a badge.",
             "sections": [
                 ("What is public", "Versioned Service Cards, sanitized Evidence Packs, verification dates, known limits and machine-derived architecture diagrams."),
                 ("What stays private", "Secrets, account identifiers, private URLs, user data, operational logs and uncoordinated vulnerability details."),
@@ -117,7 +131,7 @@ STATIC_PAGES = {
         "zh-tw": {
             "label": "驗證證據", "title": "驗證是一條公開軌跡 不是一枚徽章",
             "title_lines": ["驗證是一條公開軌跡", "不是一枚徽章"],
-            "lede": "結果必須連回 commit、環境、驗收條件與 teardown 紀錄才有意義。",
+            "lede": "證據讓人知道檢查了什麼、適用哪個版本與何時檢查。它是一條公開軌跡，不是一枚徽章。",
             "sections": [
                 ("公開內容", "版本化服務卡、經清理的 Evidence Pack、驗證日期、已知限制與機械生成架構圖。"),
                 ("私人邊界", "Secret、帳號識別、私人 URL、使用者資料、營運 log 與未協調揭露的漏洞細節。"),
@@ -142,16 +156,104 @@ STATIC_PAGES = {
             "sections": [
                 ("量測內容", "聚合 page view landing path referrer Core Web Vitals 搜尋成效與 crawler access"),
                 ("不收集內容", "不使用 cookie 使用者 ID 自訂事件 query string 部署紀錄或個人行為檔案"),
-                ("資料面分工", "Cloudflare Web Analytics 量測造訪與效能 Edge Analytics 與 AI Crawl Control 量測 crawler 搜尋曝光 點擊與索引則由 Search Console 與 Bing Webmaster 提供"),
+                ("資料面分工", "Cloudflare Web Analytics 量測造訪與效能；Edge Analytics 與 AI Crawl Control 量測 crawler；搜尋曝光、點擊與索引則由 Search Console 與 Bing Webmaster 提供。"),
             ],
         },
+    },
+}
+
+MANIFESTO = {
+    "en": {
+        "label": "ABOUT SMALLGREEN",
+        "title": "A repository is not yet a service you own",
+        "title_lines": ["A repository is not yet", "a service you own"],
+        "lede": "Our operating policy is to document deployment, data, maintenance and exit so they can be checked.",
+        "mission": ("Mission", "Help people turn an open-source small project into a service they can understand, run, maintain and remove in their own account."),
+        "vision": ("Vision", "A healthy software ecosystem is not only one where code is reusable. It is one where people can run useful services without surrendering their data or their ability to leave."),
+        "principles_label": "Principles",
+        "principles": [
+            ("Own the running service", "Code ownership is not enough. The account, data, configuration and exit path must belong to the person running the service."),
+            ("Put claims on evidence", "A claim is useful when its version, environment, checks and limitations are visible to someone else."),
+            ("Let automation guide without judging", "An Agent may guide and execute a deployment. An independent check decides whether the claim can be made."),
+        ],
+        "practice_label": "How we act",
+        "practice": [
+            ("Our publication rule", "We publish purpose, deployment prerequisites, verification state and known limits where they can be checked."),
+            ("We do not claim", "That a project is deployable, secure or sustainable without a traceable check and evidence."),
+            ("We preserve choice", "The user can change provider, maintain the service or remove the deployment."),
+        ],
+    },
+    "zh-tw": {
+        "label": "關於 SmallGreen",
+        "title": "有了 Repo 還不等於擁有一個服務",
+        "title_lines": ["有了 Repo 還不等於", "擁有一個服務"],
+        "lede": "我們的工作原則，是把部署、資料、維護與退場寫清楚，並讓它們可以被檢查。",
+        "mission": ("使命", "協助人們把開源小型專案，變成自己看得懂、能運行、能維護、也能移除的服務。"),
+        "vision": ("願景", "健康的軟體生態不只是程式碼可以重用　也要讓人能運行真正有用的服務　不用交出資料與離開的能力。"),
+        "principles_label": "我們相信的原則",
+        "principles": [
+            ("擁有正在運行的服務", "擁有程式碼還不夠　帳號、資料、設定與退場路徑也要由運行它的人掌握。"),
+            ("讓主張連回證據", "一項主張必須讓別人看見它的版本、環境、檢查方式與限制　才真正有用。"),
+            ("讓自動化引導，不讓它裁判", "Agent 可以引導與執行部署　是否能宣稱通過則由獨立檢查決定。"),
+        ],
+        "practice_label": "我們如何行動",
+        "practice": [
+            ("公開規則", "公開用途、部署前提、驗證狀態與已知限制　並讓它們可以被查核。"),
+            ("我們不宣稱", "沒有可追溯檢查與證據　就說 Repo 一定可部署、安全或永續。"),
+            ("我們保留選擇", "使用者可以更換供應商、維護服務或移除部署。"),
+        ],
+    },
+}
+
+CONCEPT_GUIDE = {
+    "en": {
+        "label": "CONCEPTS",
+        "title_lines": ["Before you run a project", "answer six useful questions"],
+        "lede": "Use these questions to decide whether an open-source project is understandable, deployable and something you can keep control of.",
+        "pass_label": "Pass condition",
+        "evidence_label": "Check",
+        "stages": [
+            ("01 / UNDERSTAND THE PROJECT", "Start with a bounded purpose", "Know what the project is for before you choose how to run it.", [
+                ("small-software", "Is the purpose and scope bounded", "The project has one stated job, a clear boundary and an owner for operation.", "Service Card: project type, problem and limits."),
+                ("service-card", "Can a person understand what it does", "Purpose, audience, data flow and known limits are visible before deployment.", "Service Card: summary, data flow and limitations."),
+            ]),
+            ("02 / CHECK THE DEPLOYMENT", "Turn assumptions into checks", "Know what the service needs before you give it an account or your data.", [
+                ("resource-budget", "Are resources and failure behavior visible", "Quota, runtime resources, free-tier limits and fallback behavior are stated.", "Service Card: resource budget and limits."),
+                ("deployment-contract", "Can deployment acceptance and removal be checked", "Prerequisites and checks are machine-readable and include teardown.", "Deployment Contract and Evidence Pack."),
+                ("deploy-agent", "Does the Agent guide without judging", "The Agent executes declared steps; an independent check decides pass or fail.", "Deploy Agent log and independent validator result."),
+            ]),
+            ("03 / KEEP CONTROL", "Keep control after deployment", "A service is yours to run only when you can maintain, move or remove it.", [
+                ("ownership-and-deployment-layer", "Can you maintain move or remove the service and its data", "Account, configuration, data export and resource-zero steps are documented and testable.", "Maintenance and teardown evidence."),
+            ]),
+        ],
+    },
+    "zh-tw": {
+        "label": "核心概念",
+        "title_lines": ["開始運行之前", "先回答六個實用問題"],
+        "lede": "用這六個問題判斷一個開源專案是否看得懂、部署得了，以及部署後能不能繼續由自己掌握。",
+        "pass_label": "通過條件",
+        "evidence_label": "查看證據",
+        "stages": [
+            ("01 / 先看懂專案", "先把用途劃清楚", "先知道專案要做什麼　再決定要怎麼運行。", [
+                ("small-software", "用途與範圍有界嗎", "專案只有一項清楚的工作　邊界明確　也有人負責運行。", "服務卡的專案類型、問題與限制。"),
+                ("service-card", "人看得懂它要做什麼嗎", "部署前就能看見用途、適合對象、資料流與已知限制。", "服務卡的摘要、資料流與限制。"),
+            ]),
+            ("02 / 確認部署方式", "把假設轉成檢查", "在交出帳號或資料前　先知道服務需要什麼。", [
+                ("resource-budget", "資源與失敗行為說清楚了嗎", "配額、運行資源、免費額度限制與降級行為都有說明。", "服務卡的資源預算與限制。"),
+                ("deployment-contract", "部署、驗收與移除檢查得了嗎", "前提與檢查條件是機器可讀　也包含 teardown。", "部署契約與 Evidence Pack。"),
+                ("deploy-agent", "Agent 只引導而不裁判嗎", "Agent 執行已宣告的步驟　是否通過則由獨立檢查決定。", "Deploy Agent log 與獨立 Validator 結果。"),
+            ]),
+            ("03 / 保留掌握權", "部署後仍然能掌握", "只有能維護、搬遷或移除的服務　才是真正由自己運行。", [
+                ("ownership-and-deployment-layer", "能維護、搬遷或移除服務與資料嗎", "帳號、設定、資料匯出與資源歸零步驟都有文件並可測試。", "維護與 teardown 證據。"),
+            ]),
+        ],
     },
 }
 
 CONCEPTS = {
     "small-software": {
         "en": ("What is Small Software", "Focused software with a bounded purpose, small operational footprint and an explicit path to ownership and exit."),
-        "zh-tw": ("什麼是 Small Software", "用途聚焦、運營足跡小，並具有明確所有權與退場路徑的軟體。"),
+        "zh-tw": ("什麼是 Small Software", "用途聚焦、運行足跡小，並具有明確所有權與退場路徑的軟體。"),
     },
     "ownership-and-deployment-layer": {
         "en": ("The ownership and deployment layer", "The contracts, evidence and tools that turn an open-source repository into an owned and maintainable service."),
@@ -171,7 +273,7 @@ CONCEPTS = {
     },
     "resource-budget": {
         "en": ("Free tier as a resource budget", "Free tier is treated as a measurable operating constraint, with limits and fallback behavior made explicit."),
-        "zh-tw": ("免費額度是一項資源預算", "把免費額度視為可量測的運營限制，明示上限與降級行為。"),
+        "zh-tw": ("免費額度是一項資源預算", "把免費額度視為可量測的運行限制，明示上限與降級行為。"),
     },
 }
 
@@ -187,7 +289,7 @@ CONCEPT_DETAILS = {
             "why": "小工具容易建立 卻常因部署 所有權與維護責任不明而被放棄",
             "how": "限制用途 明示資源預算 公開部署契約 並保留經測試的退場路徑",
             "example": "具備單一部署契約 公開證據與完整移除路徑的短網址服務就是 Small Software",
-            "evidence": "這個名稱只描述範圍與可運營性 不代表安全 穩定或社群採用",
+            "evidence": "這個名稱只描述範圍與可運行性 不代表安全 穩定或社群採用",
         },
     },
     "ownership-and-deployment-layer": {
@@ -201,7 +303,7 @@ CONCEPT_DETAILS = {
             "why": "取得原始碼不等於擁有可重現部署與可追責的維護路徑",
             "how": "把 Repo 連到契約 Agent 引導 機械閘門 公開證據與可逆部署",
             "example": "使用者能從服務卡進入已驗證契約 在自己的帳號部署 最後完整移除資源",
-            "evidence": "所有權限於使用者帳號內的部署與資料 並仍受上游授權約束",
+            "evidence": "所有權僅限於使用者帳號內的部署與資料 並仍受上游授權約束",
         },
     },
     "deploy-agent": {
@@ -254,7 +356,7 @@ CONCEPT_DETAILS = {
             "evidence": "Grades reflect verified configuration at a date. Cloudflare limits and upstream behavior may later change.",
         },
         "zh-tw": {
-            "why": "免費額度是包含配額 保存期限與失敗模式的運營限制 不是永久價格承諾",
+            "why": "免費額度是包含配額 保存期限與失敗模式的運行限制 不是永久價格承諾",
             "how": "宣告所有必要資源 依可量測限制推導等級 並在部署前公開降級行為",
             "example": "需要 Workers AI 的服務標示受限等級 並說明額度耗盡後停止的功能",
             "evidence": "等級只反映特定日期的已驗證設定 Cloudflare 限制與上游行為仍可能改變",
@@ -264,15 +366,40 @@ CONCEPT_DETAILS = {
 
 FAQ = {
     "en": [
+        ("What does SmallGreen provide?", "A clear way to understand an open-source small project before you deploy it: purpose, audience, requirements, architecture, evidence, limits and exit."),
+        ("Do I need to be a developer?", "Not necessarily. You need enough access to deploy and maintain a service in your own account; the Service Card helps you decide what to ask before you start."),
         ("Is listing the same as endorsement?", "No. Verification levels describe evidence reached under a specific Spec version; they are not a safety guarantee."),
         ("Does SmallGreen host my service?", "No. The service runs in your own account. SmallGreen publishes contracts, adapters and evidence."),
         ("Does the website track deployments?", "No. The public site has no deployment telemetry, login or user-level analytics."),
         ("Can an Agent deploy directly from the registry?", "An Agent can read the Service Card and follow the adapter AGENTS.md. Mechanical gates still decide pass or fail."),
     ],
     "zh-tw": [
-        ("收錄等於背書嗎？", "不是。驗證等級只描述特定 Spec 版本下已取得的證據，不是安全保證。"),
-        ("SmallGreen 會代管我的服務嗎？", "不會。服務運行在你自己的帳號；SmallGreen 公開契約、Adapter 與驗證證據。"),
-        ("網站會追蹤部署嗎？", "不會。公開網站沒有部署遙測、登入或使用者層級分析。"),
-        ("Agent 可以直接從 Registry 部署嗎？", "Agent 可以讀取服務卡並遵循 Adapter 的 AGENTS.md；通過或失敗仍由機械閘門判定。"),
+        ("SmallGreen 提供什麼？", [
+            "在部署開源小型專案前",
+            "先看懂用途、適合誰、部署前提、架構、證據、限制與退場方式",
+        ]),
+        ("我需要是開發者嗎？", [
+            "不一定",
+            "你需要能在自己的帳號部署與維護服務",
+            "服務卡會幫你判斷開始前應該確認什麼",
+        ]),
+        ("收錄等於背書嗎？", [
+            "不是",
+            "驗證等級只描述特定 Spec 版本下已取得的證據",
+            "不是安全保證",
+        ]),
+        ("SmallGreen 會代管我的服務嗎？", [
+            "不會代管",
+            "服務會運行在你自己的帳號",
+            "SmallGreen 會公開部署契約、Adapter 與驗證證據",
+        ]),
+        ("網站會追蹤部署嗎？", [
+            "不會",
+            "公開網站沒有部署遙測、登入或使用者層級分析",
+        ]),
+        ("Agent 可以直接從 Registry 部署嗎？", [
+            "Agent 可以讀取服務卡並遵循 Adapter 的 AGENTS.md",
+            "通過或失敗仍由機械閘門判定",
+        ]),
     ],
 }

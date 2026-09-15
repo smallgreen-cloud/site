@@ -1,31 +1,65 @@
-# SmallGreen Cloud 網站設計與內容開放政策 v1.0
+# SmallGreen 網站設計與內容開放政策 v1.1
 
-> **狀態：已定稿並套用至正式網站；外部搜尋平台驗證已完成，長期分析基線依路線圖追蹤。**
-> 適用範圍：SmallGreen Cloud 官方網站、服務卡詳頁、概念頁、規格導覽、公開資料介面及其衍生分享素材。
+> **狀態：定位與內容模型已更新於來源，待 build／QA 後部署。**
+> 適用範圍：SmallGreen 官方網站、服務卡詳頁、概念頁、規格導覽、公開資料介面及其衍生分享素材。
 > 真相源分工：Schema、契約、測試及 Evidence Pack 原始資料以 GitHub 為準；網站負責可讀呈現、搜尋發現與 Agent 導覽。
 
-## 一、網站角色
+## 一、專案定位
 
-SmallGreen Cloud 網站不是一般 SaaS Landing Page，也不是把 GitHub README 換成漂亮版面。網站有四個責任：
+SmallGreen 面向的第一個人，是：
 
-1. 讓人理解 SmallGreen Cloud 建立的是 **Small Software 的所有權與部署層**。
-2. 讓使用者比較、選擇並部署經驗證的小型開源服務。
+> **想把開源小型專案變成自己能運行的服務的人。**
+
+這個人不一定是開發者。他通常已經有一個實際問題，找到一個可能有用的開源專案，想在自己的帳號運行，但需要先知道用途、適合對象、資料流、部署前提、限制與退出方式。
+
+SmallGreen 的一句話定義是：
+
+> **SmallGreen 是一套把開源小型專案整理成可自己部署、自己掌握、自己運行的服務目錄與標準。**
+
+SmallGreen 解決的問題是：
+
+> **一個 Repo 可以被下載，不代表它已經容易看懂、部署、維護與退出。**
+
+### 1.1 不同角色看到不同層次
+
+| 角色 | 先想知道什麼 | 主要入口 |
+|---|---|---|
+| 服務採用者／運行者 | 這是什麼、解決什麼、適合誰、能不能自己運行 | 首頁、服務目錄、服務卡 |
+| 部署／維護者 | 需要哪些資源、如何驗收、失敗怎麼辦、如何移除 | 服務卡、架構圖、標準、部署契約 |
+| 開源專案維護者 | 如何把 Repo 整理成可被採用的服務 | About SmallGreen、標準、Registry 發布流程 |
+| Agent | 哪些事實可讀取、哪些步驟可執行、哪些條件可判定 | `cards.json`、Deployment Contract、Evidence |
+
+首頁只對第一個角色說人話；其他角色的資訊要能被找到，但不應該壓過第一屏的核心定義。
+
+### 1.2 網站角色
+
+SmallGreen 網站不是一般 SaaS Landing Page，也不是把 GitHub README 換成漂亮版面。網站有四個責任：
+
+1. 讓人理解 SmallGreen 是把開源小型專案整理成自己能運行服務的目錄與標準。
+2. 讓使用者先依用途與問題理解專案，再比較部署前提、證據與限制。
 3. 讓搜尋引擎與 AI Agent 找到 canonical definitions、Service Cards、Deployment Contracts 與 Conformance Evidence。
 4. 讓每一項驗證宣稱都能追溯到版本、commit、日期與 Evidence Pack。
 
-正式定位文字：
-
-> **We are building the ownership and deployment layer for Small Software.**
-> **我們正在建立小型軟體的所有權與部署層。**
+「所有權與部署層」是 SmallGreen 的技術概念，不是首頁第一句。它描述的是 Repo、契約、Agent、驗證與使用者帳號之間的實作層。
 
 互動分工：
 
-> **Humans read Service Cards. Agents read Deployment Contracts.**
 > **人看服務卡，Agent 看部署契約。**
+
+### 1.3 首頁訊息規則
+
+首頁第一屏必須依序回答：
+
+1. SmallGreen 是什麼：服務目錄與標準。
+2. 它服務誰：想把開源小型專案變成自己能運行服務的人。
+3. 它解決什麼：Repo 與可理解、可部署、可維護服務之間的空白。
+4. 使用者下一步：先找一個專案，或先看六個判斷問題。
+
+首頁第一屏不先使用 Deployment Contract、Evidence Pack、Free-tier grade、Agent 或 Green Software 作為主標題。這些是信任、部署與治理層，應在使用者理解專案之後揭露。
 
 ## 二、設計方向
 
-### 2.1 主方向：Verified Field Guide
+### 2.1 主方向：Ownable Project Field Guide
 
 網站採「**開源基礎設施的驗證型錄 × 現代技術期刊**」風格。視覺應先傳達可信、可查證、可執行，再傳達 green。
 
@@ -39,7 +73,7 @@ SmallGreen Cloud 網站不是一般 SaaS Landing Page，也不是把 GitHub READ
 
 一句驗收描述：
 
-> 看起來像一份值得信任的開源驗證型錄，而不是又一個綠色 SaaS Landing Page。
+> 看起來像一份幫人判斷開源小型專案的可信型錄，而不是又一個 SaaS Landing Page。
 
 ### 2.2 禁止的視覺捷徑
 
@@ -107,8 +141,15 @@ SmallGreen Cloud 網站不是一般 SaaS Landing Page，也不是把 GitHub READ
 - Small Software、Deploy Agent、Service Card、Deployment Contract、Evidence Pack、Cloudflare Pages 等混合語言術語視為不可拆的原子單元。
 - 大標題必須在內容模型中指定為一行或兩行；若兩行仍不自然，先重寫標題，不以縮小字級或任意第三行補救。
 - 字數只能初估寬度；所有指定分行都要用實際字型、容器與 `375`、`768`、`1280px` viewport 驗證，確認每個語意行不發生二次換行。
-- 標準例：`我們正在建立`／`小型軟體的所有權與部署層`；`Small Software`／`核心定義`；`小型軟體應該被擁有`／`不該被租用`。
+- 標準例：`開源小型專案`／`自己能運行的服務`；`開始運行之前`／`先回答六個實用問題`；`人看服務卡`／`Agent 看部署契約`。
 - 資料數字使用 tabular numbers；code 關閉易混淆的 ligature。
+
+### 4.3 SmallGreen 專案用語
+
+- 描述服務如何被使用時，統一使用「運行」；「運營」不出現在對外文案。
+- 介紹 SmallGreen 的目的、使命與做法時，公開介面使用 `About`／「關於 SmallGreen」；`Manifesto`／「宣言」只可留在舊路徑或內部實作識別。
+- 描述部署與資料的所有權範圍時，使用「所有權僅限於使用者帳號內的部署與資料」；不得寫成「所有權限於」。
+- 任何否定句、轉折句或 FAQ 答案都必須保留主詞、動詞與句子邊界；不能只刪除標點讓兩句黏成一個新句子。
 
 ## 五、版面與元件
 
@@ -119,39 +160,39 @@ SmallGreen Cloud 網站不是一般 SaaS Landing Page，也不是把 GitHub READ
 主要導覽：
 
 ```text
-SmallGreen Cloud | Concepts | Services | Standard | Evidence | Blog | EN / 繁中
+SmallGreen | Concepts | Services | Standard | Evidence | FAQ | EN / 繁中
 ```
 
 首頁資訊順序：
 
-1. Manifesto：建立什麼。
-2. How it works：Service Card → Deployment Contract → Agent → Evidence。
-3. Trust model：為什麼可信、哪些不能宣稱。
-4. Verified services：服務探索與比較。
-5. Standard／Evidence：規格版本與公開證據入口。
-6. Community／Research：案例、更新與研究，不與規格正文混合。
+1. 一句話定義與主要受眾：SmallGreen 是什麼，誰會使用它。
+2. 判斷問題：專案解決什麼、需要什麼、能不能自己掌握。
+3. 開源專案入口：依用途與問題瀏覽服務卡。
+4. 關於 SmallGreen 與核心概念：為什麼要把 Repo 整理成服務。
+5. 標準與證據：如何部署、驗收、維護與退出。
+6. 上架準備與研究案例：公開進度，但不混入已收錄服務。
 
 ### 5.2 服務目錄
 
-- 桌機採可掃描、可排序的索引式列表；名稱、用途、驗證日期、資源預算與相容 Agent 可直接比較。
-- 手機改為垂直服務卡，不把桌機表格縮小或依賴橫向捲動。
+- 服務目錄的第一層比較欄位是名稱、用途與適合對象；證據層級、資源預算與最近核對日放在決策資訊之後。
+- 桌機採可掃描、可排序的索引式列表；手機改為垂直服務卡，不把桌機表格縮小或依賴橫向捲動。
+- 服務索引必須清楚分開 `Catalogued`、`Onboarding` 與 `Research`，不可用同一種視覺讓三者看起來同樣可部署。
 - 篩選條件必須能用鍵盤操作，並在 URL 或可分享狀態中重現。
-- 卡片牆不是首頁第一屏；使用者先理解標準與信任模型，再進入服務選擇。
+- 首頁只展示少量已收錄服務；完整索引集中在服務目錄，避免研究案例與上架準備內容稀釋第一個決策。
 
 ### 5.3 服務詳頁
 
 固定資訊順序：
 
-1. 名稱、用途與適合對象。
-2. 真實服務截圖；無 UI 時顯示由契約機械生成的架構圖。
-3. Evidence Strip：部署、驗收、teardown、外連與版本狀態。
-4. 「交給 Agent 安裝」入口。
-5. 資料流、外部服務與遙測揭露。
-6. 免費層作為 Resource Budget 的限制與降級行為。
-7. 相容 Agent、驗證 commit、日期與 spec 版本。
-8. Evidence Pack 時間線。
-9. Deployment Contract 與 machine-readable references。
-10. 已知限制、未驗證項目與退場方式。
+1. 名稱與專案類型。
+2. 這是什麼專案、解決什麼問題、適合誰、可以做什麼。
+3. 部署前要準備什麼，以及開始前要知道的限制。
+4. 怎麼運行：真實服務截圖或由來源資料生成的架構圖。
+5. 已經檢查什麼：驗證等級、版本、日期與 Evidence。
+6. 在哪裡運行、會碰到什麼資料：資料流、外部服務與遙測。
+7. 如何部署、維護、搬遷或移除；需要時才展開 Agent 與契約細節。
+
+前四項是服務採用者的決策資訊，後三項是部署／維護者的操作與稽核資訊。每張卡都必須讓讀者在看技術細節前知道「它要做什麼、適不適合我」。
 
 Evidence Strip 是品牌辨識元件，格式示意：
 
@@ -202,7 +243,7 @@ Spec v0.2.1 · Verified 2026-08-03 · Commit 8a0372a
 - 導覽提供 `English | 繁體中文`，切換到同一內容的另一語言版本。
 - 不依 IP、瀏覽器語言或 cookie 強制轉址。
 - 每個翻譯對有各自 canonical，並互列 `hreflang="en"`、`hreflang="zh-Hant-TW"` 與 `x-default`。
-- 首頁、Manifesto、核心 Concepts、FAQ、Glossary、服務卡與信任說明必須雙語。
+- 首頁、About SmallGreen、核心 Concepts、FAQ、Glossary、服務卡與信任說明必須雙語。
 - Schema、Deployment Contract、AGENTS.md、API／MCP schema、Evidence Pack 原始資料維持英文或機器格式的單一真相源；繁中提供解釋與連結，不另維護第二份規格。
 - Blog 與研究採選擇性翻譯；沒有完整正文翻譯就不建立語言替身頁或 `hreflang`。
 
@@ -244,7 +285,7 @@ GitHub `smallgreen-cloud/site` 的 `main` 是正式部署真相源。每次主�
 
 | 等級 | 定義 | 例子 | 網站處理 |
 |---|---|---|---|
-| **P0 Public Canonical** | 為標準採用、理解與執行所必需 | Manifesto、Concepts、公開 Spec、Service Cards、Schema、驗證等級、公開 Registry 索引、授權與治理政策 | 全文公開、可索引、穩定 URL、明確授權 |
+| **P0 Public Canonical** | 為標準採用、理解與執行所必需 | About SmallGreen、Concepts、公開 Spec、Service Cards、Schema、驗證等級、公開 Registry 索引、授權與治理政策 | 全文公開、可索引、穩定 URL、明確授權 |
 | **P1 Public Evidence** | 支持公開宣稱且完成清理的證據 | 驗證 commit、日期、測試結果、資源類型、經清理的 Evidence Pack、真實截圖、teardown 結果、已知限制 | 公開且可稽核；發布前通過敏感資料掃描 |
 | **P2 Public Summary** | 有公共價值，但原始內容含操作或身份風險 | 失敗案例、維護事件、資安修復、實驗彙總、使用回饋 | 公開摘要與必要證據；移除帳號、路徑、日誌細節及可識別資料 |
 | **R0 Restricted** | 不應進入公開網站或公開建置輸入 | token、secret、account／zone／resource ID、私人 repo 內容、使用者資料、IP、email、未公開部署 URL、完整營運 log、內部 session、未協調漏洞、未定稿研究 | 不複製、不 render、不建立索引；僅留在授權環境 |
@@ -317,7 +358,7 @@ Cloudflare AI Crawl Control 目前只用於觀察與分類 crawler。Managed rob
 
 ---
 
-文件版本：v1.0
-定稿日期：2026-08-03
-現況更新：2026-08-04
-Owner：SmallGreen Cloud maintainers
+文件版本：v1.1
+定稿日期：2026-08-27
+現況更新：2026-08-27
+Owner：SmallGreen maintainers

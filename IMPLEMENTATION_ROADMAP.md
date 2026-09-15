@@ -1,7 +1,7 @@
-# SmallGreen Cloud 網站實作路線圖
+# SmallGreen 網站內容與實作路線圖
 
-> 狀態：網站工程、正式部署與搜尋平台驗證已完成；30 天 SEO／AEO 分析基線持續累積
-> 更新日期：2026-08-04
+> 狀態：網站工程與搜尋平台驗證已完成；定位與內容呈現 v1.1 已更新，待 build／QA 後部署；30 天 SEO／AEO 分析基線持續累積
+> 更新日期：2026-08-27
 > 範圍：公開網站、SEO、AEO、Cloudflare Pages 與品質閘門
 > 排除：沙盒工作
 
@@ -12,7 +12,7 @@
 - 原始碼：GitHub 公開 repo `smallgreen-cloud/site`；`main` 為唯一正式部署來源
 - 部署：GitHub Actions 完成契約檢核、網站建置、Browser QA、公開產物敏感資料掃描後，以 Wrangler 部署既有 Cloudflare Pages Direct Upload 專案 `smallgreen-site`
 - 自動部署已由 PR #3 建立；自訂網域與 portable canonical 由 PR #4 完成；Bing HTML 驗證由 PR #5 完成
-- 目前建置輸出：13 個服務、6 個概念、68 個 HTML 頁面；架構測試 20 項
+- 目前建置輸出：13 個已收錄服務、3 個上架準備專案、31 個研究案例、6 個概念；架構測試 31 項
 - Cloudflare Web Analytics 已啟用，正式站 beacon、CSP 與 HTTP 200 已驗證
 - Cloudflare AI Crawl Control 採監測模式；Managed robots.txt 關閉，避免以全站單一訊號覆蓋目前按 crawler 與路徑區分的授權政策
 - Google Search Console Domain property 已驗證；`sitemap.xml` 狀態成功，已探索 52 個網頁
