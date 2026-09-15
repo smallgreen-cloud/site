@@ -328,6 +328,12 @@ class SiteArchitectureTest(unittest.TestCase):
                     self.assertNotIn(line[0], forbidden_edges)
                     self.assertNotIn(line[-1], forbidden_edges)
 
+    def test_manifesto_purpose_heading_uses_short_semantic_lines(self):
+        page = self.read("zh-tw/manifesto/index.html")
+        self.assertIn('<span class="title-line">讓開源專案</span>', page)
+        self.assertIn('<span class="title-line">成為自己的服務</span>', page)
+        self.assertNotIn('<span class="title-line">我們要讓什麼成為可能</span>', page)
+
     def test_concept_pages_include_complete_aeo_structure(self):
         index = self.read("concepts/index.html")
         for marker in ("concept-path", "concept-stage", "Is the purpose and scope bounded", "Can you maintain move or remove the service and its data", "Pass condition", "Check"):
