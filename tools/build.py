@@ -9,6 +9,7 @@ Source ownership:
 import argparse
 import hashlib
 import json
+import re
 import shutil
 from html import escape
 from pathlib import Path
@@ -60,11 +61,14 @@ def clean_zh_display_copy(html: str) -> str:
     This operates on the final zh-Hant document so Registry-sourced editorial
     strings follow the same presentation rule without mutating Registry facts.
     Technical ASCII in URLs, versions, code and identifiers remains unchanged.
+    Code elements are machine-facing and must preserve all punctuation exactly.
     """
     replacements = {"。": "　", "，": "　", "；": "　", "：": " ", "！": "", "？": ""}
-    for punctuation, replacement in replacements.items():
-        html = html.replace(punctuation, replacement)
-    return html
+    segments = re.split(r"(<code\b[^>]*>.*?</code>)", html, flags=re.DOTALL | re.IGNORECASE)
+    for index in range(0, len(segments), 2):
+        for punctuation, replacement in replacements.items():
+            segments[index] = segments[index].replace(punctuation, replacement)
+    return "".join(segments)
 
 
 def clean_base_url(value: str) -> str:
@@ -288,6 +292,34 @@ def load_research_cases(registry: Path) -> list:
         if any(not isinstance(project["next_steps"][lang], list) or not project["next_steps"][lang]
                for lang in ("en", "zh-tw")):
             raise ValueError(f"research case {project['id']} needs bilingual next_steps lists")
+        install = project.get("agent_install")
+        if install is not None:
+            required_install = {"protocol", "status", "deployment_ready", "contract_url", "trigger",
+                                "target", "hosting", "runtime_setup", "blockers"}
+            missing_install = sorted(required_install - set(install)) if isinstance(install, dict) else sorted(required_install)
+            if missing_install:
+                raise ValueError(f"research case {project['id']} agent_install missing: {', '.join(missing_install)}")
+            if install["protocol"] != "smallgreen-install/v1":
+                raise ValueError(f"research case {project['id']} uses an unsupported install protocol")
+            if install["status"] != "candidate" or install["deployment_ready"] is not False:
+                raise ValueError(f"research case {project['id']} cannot claim a ready install while it remains research-stage")
+            if not isinstance(install["blockers"], list) or not install["blockers"]:
+                raise ValueError(f"research case {project['id']} candidate install needs blockers")
+            if install["target"] != {"client": "chatgpt-work", "hosting": "sites", "execution_mode": "native-sites"}:
+                raise ValueError(f"research case {project['id']} install target must be native ChatGPT Work Sites")
+            hosting = install["hosting"]
+            if hosting.get("managed_resources") != ["site", "d1", "r2"] or hosting.get("external_infrastructure") != []:
+                raise ValueError(f"research case {project['id']} install must use only Sites-managed site, D1 and R2")
+            runtime = install["runtime_setup"]
+            if (runtime.get("name"), runtime.get("timing"), runtime.get("entry_channel"), runtime.get("chat_handling")) != (
+                    "GROQ_API_KEY", "after-deploy", "application-ui", "forbidden"):
+                raise ValueError(f"research case {project['id']} Groq key must be entered after deploy in the application UI")
+            if any(not isinstance(install["trigger"].get(lang), str) or not install["trigger"][lang].strip()
+                   for lang in ("en", "zh-tw")):
+                raise ValueError(f"research case {project['id']} install trigger must be bilingual")
+            if not re.fullmatch(r"https://raw\.githubusercontent\.com/[\w.-]+/[\w.-]+/[0-9a-f]{40}/\.smallgreen/install\.yaml",
+                                install["contract_url"]):
+                raise ValueError(f"research case {project['id']} install contract URL must pin a GitHub commit")
     return projects
 
 
@@ -623,12 +655,29 @@ def research_detail_body(project: dict, lang: str) -> str:
         (("Checked on" if lang == "en" else "資料核對日"), text(source["checked_on"])),
     ]
     facts_html = "".join(f'<div class="fact"><dt>{text(label)}</dt><dd>{value}</dd></div>' for label, value in facts)
+    install = project.get("agent_install")
+    install_html = ""
+    if install:
+        phrase = install["trigger"][lang]
+        copied = "已複製" if lang == "zh-tw" else "Copied"
+        copy_label = "複製" if lang == "zh-tw" else "Copy"
+        title = "Agent 安裝契約" if lang == "zh-tw" else "Agent install contract"
+        status = "候選契約" if lang == "zh-tw" else "Candidate contract"
+        note = ("Work 可以讀取安裝契約，但這條路徑尚未完成全新帳戶驗收；不得回報 SmallGreen Ready。"
+                if lang == "zh-tw" else
+                "Work can read this install contract, but the fresh-account path is not verified yet and must not be reported as SmallGreen Ready.")
+        contract_label = "查看原始安裝契約" if lang == "zh-tw" else "View source install contract"
+        discovery_label = "機器可讀 install.json" if lang == "zh-tw" else "Machine-readable install.json"
+        # The trigger is a machine-facing command. Preserve its punctuation exactly;
+        # the prose formatter intentionally normalizes Chinese sentence punctuation.
+        install_html = f'''<section class="agent-install candidate-install"><h2>{title}</h2><p><span class="research-state">{status}</span></p><p>{text(note)}</p><div class="command"><code id="research-agent-command">{escape(str(phrase))}</code><button class="copy-button" type="button" data-copy="research-agent-command" data-copied-label="{copied}">{copy_label}</button></div><p><a href="{text(install['contract_url'])}">{contract_label}</a> · <a href="/services/{text(project['id'])}/install.json">{discovery_label}</a></p></section>'''
     return f"""
 <header class="page-hero"><div class="shell"><p class="kicker">RESEARCH CASE / {text(project['id'])}</p><h1 class="page-title">{text(project['name'])}</h1><p class="page-lede">{text(summary_copy(project, 'project_type', lang))}</p></div></header>
 <section class="section"><div class="shell article-layout"><aside class="article-index"><span class="research-state">{text(project['state_label'][lang])}</span><p>{text('候選研究卡' if lang == 'zh-tw' else 'Research-stage candidate')}</p></aside><article class="prose">
 <div class="research-note"><strong>{'這不是已驗證服務' if lang == 'zh-tw' else 'Not a verified service'}</strong><p>{text(warning)}</p></div>
 {product_summary_body(project, lang)}
 <figure class="architecture">{arch_svg(research_case_architecture(project), provenance="research")}<figcaption>{'依研究階段架構 metadata 生成　尚待部署驗證。' if lang == 'zh-tw' else 'Architecture generated from research-stage metadata; deployment verification is still pending.'}</figcaption></figure>
+{install_html}
 <h2>{'目前進度' if lang == 'zh-tw' else 'Current stage'}</h2><p>{text(project['current_stage'][lang])}</p>
 <h2>{'上游資料' if lang == 'zh-tw' else 'Upstream facts'}</h2><dl class="facts">{facts_html}</dl>
 <h2>{'下一步' if lang == 'zh-tw' else 'Next steps'}</h2><ul>{next_steps}</ul>
@@ -780,6 +829,23 @@ def write_machine_outputs(cards: list, out: Path, base_url: str, canonical_route
         item = {key: value for key, value in project.items() if not key.startswith("_")}
         item["url"] = f"{base_url}/services/{project['id']}/"
         public_research.append(item)
+        install = project.get("agent_install")
+        if install:
+            install_dir = out / "services" / project["id"]
+            install_dir.mkdir(parents=True, exist_ok=True)
+            discovery = {
+                **install,
+                "service_card": f"{base_url}/services/{project['id']}/",
+                "source": {
+                    "repository": project["source"]["repository"],
+                    "commit": project["source"].get("locked_commit"),
+                    "license": project["source"]["license"],
+                },
+                "notice": "Candidate install discovery. Inspectable, not yet verified as SmallGreen Ready.",
+            }
+            (install_dir / "install.json").write_text(
+                json.dumps(discovery, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            )
     (out / "cards.json").write_text(json.dumps({
         "source": "https://github.com/smallgreen-cloud/registry",
         "spec": "https://github.com/smallgreen-cloud/spec",

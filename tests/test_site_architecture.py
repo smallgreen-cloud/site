@@ -186,6 +186,40 @@ class SiteArchitectureTest(unittest.TestCase):
         self.assertIn("14 CATALOGUED", services)
         self.assertNotIn("14 VERIFIED", services)
 
+    def test_audio_notes_exposes_candidate_install_discovery_without_claiming_ready(self):
+        discovery = json.loads(self.read("services/audio-notes-sites/install.json"))
+        self.assertEqual(discovery["protocol"], "smallgreen-install/v1")
+        self.assertEqual(discovery["status"], "candidate")
+        self.assertFalse(discovery["deployment_ready"])
+        self.assertEqual(discovery["target"], {
+            "client": "chatgpt-work",
+            "hosting": "sites",
+            "execution_mode": "native-sites",
+        })
+        self.assertEqual(discovery["hosting"]["managed_resources"], ["site", "d1", "r2"])
+        self.assertEqual(discovery["hosting"]["external_infrastructure"], [])
+        self.assertEqual(discovery["runtime_setup"]["name"], "GROQ_API_KEY")
+        self.assertEqual(discovery["runtime_setup"]["entry_channel"], "application-ui")
+        self.assertEqual(discovery["runtime_setup"]["chat_handling"], "forbidden")
+        self.assertTrue(discovery["blockers"])
+
+        zh = self.read("zh-tw/services/audio-notes-sites/index.html")
+        self.assertIn("依這網站，幫我部署到我的帳號", zh)
+        self.assertIn("Agent 安裝契約", zh)
+        self.assertIn("候選契約", zh)
+        self.assertNotIn('<span class="research-state">SmallGreen Ready</span>', zh)
+
+    def test_audio_notes_machine_copy_has_no_yaml_null_fragments(self):
+        audio = next(
+            item for item in json.loads(self.read("cards.json"))["research_cases"]
+            if item["id"] == "audio-notes-sites"
+        )
+        for field in ("project_type", "problem", "current_stage", "verification_note"):
+            value = audio["product_summary"][field]["en"] if field in audio["product_summary"] else audio[field]["en"]
+            self.assertIsInstance(value, str)
+            localized = audio["product_summary"][field] if field in audio["product_summary"] else audio[field]
+            self.assertNotIn(None, localized.values())
+
     def test_shared_assets_are_local_and_present(self):
         self.assertTrue((self.out / "assets" / "site.css").is_file())
         self.assertTrue((self.out / "assets" / "site.js").is_file())
