@@ -2,9 +2,12 @@ import hashlib
 import json
 import os
 import re
+import shlex
+import subprocess
 import sys
 import tempfile
 import unittest
+import yaml
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
@@ -219,6 +222,30 @@ class SiteArchitectureTest(unittest.TestCase):
             self.assertIsInstance(value, str)
             localized = audio["product_summary"][field] if field in audio["product_summary"] else audio[field]
             self.assertNotIn(None, localized.values())
+
+    def test_production_workflow_publishes_links_on_the_custom_domain(self):
+        workflow = yaml.safe_load((ROOT / ".github/workflows/site.yml").read_text())
+        step = next(item for item in workflow["jobs"]["build"]["steps"]
+                    if item.get("run", "").startswith("python tools/build.py"))
+        command = shlex.split(step["run"])
+        command[0] = sys.executable
+        command[command.index("--registry") + 1] = str(REGISTRY)
+        origin = "https://smallgreen.cooperation.tw"
+        with tempfile.TemporaryDirectory() as directory:
+            out = Path(directory)
+            subprocess.run(command + ["--out", directory], cwd=ROOT, check=True, capture_output=True)
+            cards = json.loads((out / "cards.json").read_text())
+            for group in ("cards", "onboarding", "research_cases"):
+                for card in cards[group]:
+                    self.assertTrue(card["url"].startswith(origin + "/services/"), card["url"])
+            discovery = json.loads((out / "services/audio-notes-sites/install.json").read_text())
+            self.assertEqual(discovery["service_card"], origin + "/services/audio-notes-sites/")
+            for prefix in ("", "zh-tw/"):
+                route = prefix + "services/audio-notes-sites/"
+                self.assertIn(f'<link rel="canonical" href="{origin}/{route}">',
+                              (out / route / "index.html").read_text())
+            for name in ("sitemap.xml", "llms.txt", "llms-full.txt", "feed.xml"):
+                self.assertNotIn("https://smallgreen-site.pages.dev/", (out / name).read_text(), name)
 
     def test_shared_assets_are_local_and_present(self):
         self.assertTrue((self.out / "assets" / "site.css").is_file())
