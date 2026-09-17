@@ -523,6 +523,7 @@ class SiteArchitectureTest(unittest.TestCase):
         self.assertIn("uses: actions/upload-artifact@v4", workflow)
         self.assertIn("uses: actions/download-artifact@v4", workflow)
         self.assertIn("needs: [conformance, build]", workflow)
+        self.assertIn("github.event_name != 'pull_request'", workflow)
         self.assertIn("github.ref == 'refs/heads/main'", workflow)
         self.assertIn("apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}", workflow)
         self.assertIn("accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}", workflow)
