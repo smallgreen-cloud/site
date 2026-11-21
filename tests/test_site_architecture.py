@@ -186,8 +186,8 @@ class SiteArchitectureTest(unittest.TestCase):
         services = self.read("services/index.html")
         self.assertIn("Research-stage candidates", services)
         self.assertIn("First-party onboarding", services)
-        self.assertIn("14 CATALOGUED", services)
-        self.assertNotIn("14 VERIFIED", services)
+        self.assertIn("15 CATALOGUED", services)
+        self.assertNotIn("15 VERIFIED", services)
 
     def test_audio_notes_exposes_candidate_install_discovery_without_claiming_ready(self):
         discovery = json.loads(self.read("services/audio-notes-sites/install.json"))
