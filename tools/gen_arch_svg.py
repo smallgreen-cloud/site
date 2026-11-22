@@ -22,6 +22,7 @@ COMPUTE_LABEL = {
     "pages": "Pages",
     "github-actions": "GitHub Actions",
     "github-pages": "GitHub Pages",
+    "site": "ChatGPT Sites",
 }
 # id → (完整標籤, 短標籤)
 DATA_LABEL = {
@@ -62,7 +63,7 @@ def _split_components(card: dict) -> tuple[list[tuple[str, str]], list[tuple[str
         "artifacts": "workflow-artifacts", "workflow-artifacts": "workflow-artifacts",
         "rss": "rss", "rss-sources": "rss",
     }
-    for platform in ("cloudflare", "github"):
+    for platform in ("cloudflare", "github", "sites"):
         for raw in card.get("components", {}).get(platform, []) or []:
             base = str(raw).strip().replace("（選配）", "(選配)")
             opt = base.endswith("(選配)")
@@ -74,6 +75,8 @@ def _split_components(card: dict) -> tuple[list[tuple[str, str]], list[tuple[str
                 compute.append((cid, COMPUTE_LABEL[cid] + suffix))
             else:
                 full, short = DATA_LABEL.get(cid, (cid, cid[:6]))
+                if platform == "sites":
+                    full = {"d1": "Sites D1", "r2": "Sites R2", "mcp": "Personal MCP"}.get(cid, full)
                 data.append((cid, full + suffix, short))
     return compute, data
 

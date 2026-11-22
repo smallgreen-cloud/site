@@ -215,6 +215,9 @@ def load_registry(registry: Path) -> tuple:
     return sort_cards(cards), taxonomy
 
 
+from onboarding_sites import validate_sites_onboarding, sites_install_body
+
+
 def load_onboarding(registry: Path) -> list:
     """Load transparent first-party candidates without mixing them into verified cards."""
     path = registry / "onboarding" / "first-party.yaml"
@@ -239,8 +242,12 @@ def load_onboarding(registry: Path) -> list:
                 for field in required_summary):
             raise ValueError(f"onboarding project {project['id']} needs bilingual product_summary")
         architecture = project["architecture"]
-        if not isinstance(architecture, dict) or not architecture.get("cloudflare"):
-            raise ValueError(f"onboarding project {project['id']} needs architecture.cloudflare")
+        if not isinstance(architecture, dict):
+            raise ValueError(f"onboarding project {project['id']} needs architecture")
+        if architecture.get("sites"):
+            validate_sites_onboarding(project)
+        elif not architecture.get("cloudflare"):
+            raise ValueError(f"onboarding project {project['id']} needs architecture.cloudflare or architecture.sites")
         for field in ("current_stage", "next_steps"):
             if not isinstance(project[field], dict) or not project[field].get("en") or not project[field].get("zh-tw"):
                 raise ValueError(f"onboarding project {project['id']} needs en and zh-tw {field}")
@@ -394,7 +401,7 @@ def onboarding_architecture(project: dict) -> dict:
     return {
         "id": project["id"],
         "name": project["name"],
-        "components": {"cloudflare": project["architecture"]["cloudflare"]},
+        "components": {key: project["architecture"][key] for key in ("cloudflare", "sites") if key in project["architecture"]},
         "data_flow": {"external_services": project["architecture"].get("external_services", [])},
     }
 
@@ -634,6 +641,7 @@ def onboarding_detail_body(project: dict, lang: str) -> str:
 <section class="section"><div class="shell article-layout"><aside class="article-index"><span class="onboarding-state">{text(project['state_label'][lang])}</span><p>{text('自有專案' if lang == 'zh-tw' else 'First-party project')}</p></aside><article class="prose">
 <div class="onboarding-note"><strong>{'這不是已驗證服務' if lang == 'zh-tw' else 'This is not a verified service yet'}</strong><p>{'目前公開的是產品用途與上架進度；驗證完成後才會進入正式服務卡與 Evidence 索引。' if lang == 'zh-tw' else 'This page publishes the product purpose and onboarding status. It will enter the verified service index only after evidence is complete.'}</p></div>
 {product_summary_body(project, lang)}
+{sites_install_body(project, lang)}
 <figure class="architecture">{arch_svg(onboarding_architecture(project), provenance="onboarding")}<figcaption>{"Architecture generated from onboarding project data." if lang == "en" else "依上架準備資料生成的架構圖。"}</figcaption></figure>
 <h2>{'目前進度' if lang == 'zh-tw' else 'Current stage'}</h2><p>{text(onboarding_copy(project, 'current_stage', lang))}</p>
 <h2>{'上架前待辦' if lang == 'zh-tw' else 'Before catalogue entry'}</h2><ul>{next_steps}</ul>
@@ -824,6 +832,15 @@ def write_machine_outputs(cards: list, out: Path, base_url: str, canonical_route
         item = {key: value for key, value in project.items() if not key.startswith("_")}
         item["url"] = f"{base_url}/services/{project['id']}/"
         public_onboarding.append(item)
+        install = project.get("agent_install")
+        if install:
+            install_dir = out / "services" / project["id"]
+            install_dir.mkdir(parents=True, exist_ok=True)
+            (install_dir / "install.json").write_text(json.dumps({
+                **install, "source": project["source"],
+                "service_card": item["url"],
+                "notice": "Candidate; deployment, MCP, photos, Voice, mobile and teardown require separate evidence."
+            }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     public_research = []
     for project in research_cases:
         item = {key: value for key, value in project.items() if not key.startswith("_")}

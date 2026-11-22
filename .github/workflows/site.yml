@@ -54,7 +54,7 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - name: Architecture tests（bilingual routes／SEO contracts／legacy URLs）
-        run: REGISTRY_PATH=.registry python -m unittest tests/test_site_architecture.py
+        run: REGISTRY_PATH=.registry python -m unittest discover -s tests -p 'test_*.py'
       - name: Build（registry 卡片 → dist）
         run: python tools/build.py --registry .registry --base-url https://smallgreen.cooperation.tw
       - name: 產物斷言（服務數、雙語頁與機器介面）
