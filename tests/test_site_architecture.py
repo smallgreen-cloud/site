@@ -162,7 +162,15 @@ class SiteArchitectureTest(unittest.TestCase):
                 for field in ("project_type", "problem", "audience", "capabilities", "limitations", "deployment_requirements"):
                     self.assertTrue(summary[field]["zh-tw"])
                     self.assertTrue(summary[field]["en"])
-                self.assertTrue(project["architecture"]["cloudflare"])
+                architecture = project["architecture"]
+                if architecture.get("sites"):
+                    self.assertEqual(architecture["sites"], ["site", "d1", "r2", "mcp"])
+                    self.assertFalse(architecture.get("cloudflare"))
+                    self.assertEqual(architecture.get("external_services"), [])
+                    self.assertFalse(project["agent_install"]["deployment_ready"])
+                    self.assertEqual(project["agent_install"]["status"], "candidate")
+                else:
+                    self.assertTrue(architecture["cloudflare"])
                 for prefix in ("", "zh-tw/"):
                     page = self.read(f"{prefix}services/{project['id']}/index.html")
                     self.assertIn('class="product-summary"', page)
@@ -304,7 +312,10 @@ class SiteArchitectureTest(unittest.TestCase):
         self.assertIn("service directory and standard", cards["positioning"]["en"]["definition"])
         self.assertIn("服務目錄與標準", cards["positioning"]["zh-Hant-TW"]["definition"])
         self.assertEqual(cards["cards"][0]["url"].split("/services/")[0], "https://smallgreen-site.pages.dev")
-        self.assertEqual([item["id"] for item in cards["onboarding"]], ["homebox-edge", "kb-vault", "meeting-capture-kit"])
+        source_projects = yaml.safe_load((REGISTRY / "onboarding/first-party.yaml").read_text())["projects"]
+        verified_ids = {item["id"] for item in cards["cards"]}
+        self.assertEqual([item["id"] for item in cards["onboarding"]],
+                         [item["id"] for item in source_projects if item["id"] not in verified_ids])
         self.assertTrue(all(item["url"].startswith("https://smallgreen-site.pages.dev/services/") for item in cards["onboarding"]))
         self.assertEqual(len(cards["research_cases"]), 33)
         self.assertTrue(all(item["url"].startswith("https://smallgreen-site.pages.dev/services/") for item in cards["research_cases"]))
